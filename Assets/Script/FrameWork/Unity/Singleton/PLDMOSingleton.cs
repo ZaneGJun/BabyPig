@@ -9,7 +9,7 @@ namespace Pld{
 	/// 不会随场景切换而销毁的单例实现
 	/// 将单例挂载在一个不会随场景切换而销毁的组件上
 	/// </summary>
-	public abstract class PLDMOSingleton<T> : MonoBehaviour where T : PLDMOSingleton<T> {
+	public abstract class PLDMOSingleton<T> : MonoBehaviour, IPLDSingleton where T : PLDMOSingleton<T> {
 
 		protected static T _instance = null;
 		public static T Instance
@@ -20,10 +20,9 @@ namespace Pld{
 					GameObject hold = GameObject.Find ("PLD");
 					if (null == hold) {
 						hold = new GameObject ("PLD");
+						//设置为不可销毁
+						DontDestroyOnLoad (hold);
 					}
-
-					//设置为不可销毁
-					DontDestroyOnLoad (hold);
 
 					//在组件上得到T组件
 					_instance = hold.GetComponent<T>();
@@ -32,10 +31,16 @@ namespace Pld{
 					if (null == _instance) {
 						_instance = hold.AddComponent<T> ();
 					}
+
+					_instance.Init ();
 				}
 
 				return _instance;
 			}
+		}
+
+		public virtual void Init() {
+			
 		}
 	}
 }

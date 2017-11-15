@@ -2,7 +2,7 @@
 
 namespace Pld
 {
-	public interface IPLDSingleton
+	public interface IPLDSingleton 
 	{
 		void Init();
 	}

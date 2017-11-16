@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Pld{
-	public class PLDSingleton<T> : IPLDSingleton where T : PLDSingleton<T>, new(){
-
+namespace Pld
+{
+	public class PLDSingleton<T> : IPLDSingleton where T : PLDSingleton<T>, new()
+	{
 		protected static T _instance = null;
 		public static T Instance{
 			get{

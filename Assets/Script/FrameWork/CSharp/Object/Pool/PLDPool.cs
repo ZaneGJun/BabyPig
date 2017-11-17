@@ -4,7 +4,7 @@ namespace Pld
 {
 	using System.Collections.Generic;
 	
-	public class PLDPool<T> : IPLDPool<T> where T : IPLDObject
+	public abstract class PLDPool<T> : IPLDPool<T> where T : IPLDObject
 	{
 		/// <summary>
 		/// Gets the current count.

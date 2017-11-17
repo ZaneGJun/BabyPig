@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pld
 {
-	public class PLDMOObjectFactory<T> : IPLDObjectFactory<T> where T : MonoBehaviour, IPLDObject
+	public class PLDMOObjectFactory<T> : IPLDObjectFactory<T> where T : PLDMOObject
 	{
 		public virtual T Create ()
 		{

@@ -3,14 +3,16 @@ using UnityEngine;
 
 namespace Pld
 {
-	public class PLDMOObjectFactory<T> : IPLDObjectFactory<T> where T : PLDMOObject
+	public class PLDCommonObjectFactory<T> : IPLDObjectFactory<T> 
 	{
 
 		protected Func<T> mCreateMothod;
+		protected Action<T> mDestroyAction;
 
-		public PLDMOObjectFactory(Func<T> createMethod)
+		public PLDCommonObjectFactory(Func<T> createMethod, Action<T> destroyAction)
 		{
 			mCreateMothod = createMethod;
+			mDestroyAction = destroyAction;
 		}
 
 		public virtual T Create ()
@@ -20,7 +22,7 @@ namespace Pld
 
 		public virtual void Destroy(T obj)
 		{
-			
+			mDestroyAction (obj);
 		}
 	}
 }

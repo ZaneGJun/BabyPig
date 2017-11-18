@@ -2,7 +2,7 @@
 
 namespace Pld
 {
-	public interface IPLDObjectFactory<T> where T: IPLDObject
+	public interface IPLDObjectFactory<T> 
 	{
 		T Create ();
 

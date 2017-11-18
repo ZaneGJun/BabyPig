@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Pld
 {
-	public interface IPLDPool<T> where T : IPLDObject
+	public interface IPLDPool<T>
 	{
 		/// <summary>
 		/// Allocate this instance.

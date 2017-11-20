@@ -22,7 +22,7 @@ namespace Pld
 		/// The max count.
 		/// 最大缓存数量
 		/// </summary>
-		public int MaxCount = 10;
+		public int MaxCount = 100;
 
 		//工厂
 		protected IPLDObjectFactory<T> mFactory;

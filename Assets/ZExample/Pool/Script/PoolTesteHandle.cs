@@ -41,15 +41,23 @@ public class PoolTesteHandle : MonoBehaviour {
 	}
 
 	private GameObject genObj() {
+#if UNITY_EDITOR
 		GameObject obj = Instantiate (AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ZExample/Pool/Model/TestObj.prefab"));
 		obj.name = obj.name.Replace ("(Clone)","");
 		return obj;
+#endif
+
+		return null;
 	}
 
 	private GameObject genObject2(){
+#if UNITY_EDITOR
 		GameObject obj = Instantiate (AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ZExample/Pool/Model/TestObject2.prefab"));
 		obj.name = obj.name.Replace ("(Clone)","");
 		return obj;
+#endif
+
+		return null;
 	}
 
 	private void destroyObj(GameObject obj) {

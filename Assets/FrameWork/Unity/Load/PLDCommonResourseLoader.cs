@@ -1,5 +1,10 @@
 ﻿using System;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace Pld
 {
 	/// <summary>
@@ -10,7 +15,7 @@ namespace Pld
 	/// .支持按优先级加载
 	/// .支持配置系统开销，异步加载开销
 	/// </summary>
-	public class PLDCommonResourseLoader
+	public static class PLDCommonResourseLoader
 	{
 		/// <summary>
 		/// Load type.
@@ -20,73 +25,6 @@ namespace Pld
 			LOAD_RESOURCES,
 			LOAD_STREAMING_ASSETS,
 			LOAD_PERSISTENT_DATA_PATH
-		}
-
-		/// <description>
-		/// IOS:
-		/// 	Application.dataPath:					Application/xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx/xxx.app/Data
-		/// 	Application.streamingAssetsPath:		Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxx.app/Data/Raw
-		/// 	Application.persistentDataPath:			Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Documents
-		/// 	Application.temporaryCachePath:			Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Library/Caches
-		/// Android:
-		///		Application.dataPath :                  /data/app/xxx.xxx.xxx.apk
-		///		Application.streamingAssetsPath :      	jar:file:///data/app/xxx.xxx.xxx.apk/!/assets
-		///		Application.persistentDataPath :        /data/data/xxx.xxx.xxx/files
-		///		Application.temporaryCachePath :      	/data/data/xxx.xxx.xxx/cache
-		/// Windows:
-		///		Application.dataPath :                  /Assets
-		///		Application.streamingAssetsPath :      	/Assets/StreamingAssets
-		///		Application.persistentDataPath :        C:/Users/xxxx/AppData/LocalLow/CompanyName/ProductName
-		///		Application.temporaryCachePath :      	C:/Users/xxxx/AppData/Local/Temp/CompanyName/ProductName
-		/// Mac:
-		///		Application.dataPath :                  /Assets
-		///		Application.streamingAssetsPath :      	/Assets/StreamingAssets
-		///		Application.persistentDataPath :        /Users/xxxx/Library/Caches/CompanyName/Product Name
-		///		Application.temporaryCachePath :     	/var/folders/57/6b4_9w8113x2fsmzx_yhrhvh0000gn/T/CompanyName/Product Name
-		/// Windows Web Player:
-		///		Application.dataPath :             		file:///D:/MyGame/WebPlayer (即导包后保存的文件夹，html文件所在文件夹)
-		///		Application.streamingAssetsPath :
-		///		Application.persistentDataPath :
-		///		Application.temporaryCachePath :
-		///
-		/// </description>
-
-		/// <summary>
-		/// Sets the PERSISTEN t PAT h DATABAS.
-		/// 一个可读可写的目录，程序安装后生成，用于保存热更新下载的资源
-		/// </summary>
-		/// <value>The PERSISTEN t PAT h DATABAS.</value>
-		public static string PERSISTENT_PATH
-		{
-			get 
-			{
-			#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-				return Application.persistentDataPath;
-			#else
-				return Application.persistentDataPath;
-			#endif
-			}
-		}
-
-		/// <summary>
-		/// Gets the STREAMIN g PAT h DATABAS.
-		/// StreamingAssets目录
-		/// </summary>
-		/// <value>The STREAMIN g PAT h DATABAS.</value>
-		public static string STREAMING_PATH 
-		{
-			get 
-			{
-			#if UNITY_EDITOR || UNITY_STANDALONE_WIN
-				return "file://" + Application.streamingAssetsPath;
-			#elif UNITY_ANDROID
-				return Application.streamingAssetsPath;
-			#elif UNITY_IOS
-				return Application.streamingAssetsPath;
-			#else
-				return Application.streamingAssetsPath;
-			#endif
-			}
 		}
 
 		/// <summary>
@@ -104,27 +42,63 @@ namespace Pld
 		
 		/// <summary>
 		/// Gets the data from streaming assets.
-		/// 从StreamingAssets文件夹中读取资源,必须用WWW的方式读取
+		/// 从StreamingAssets文件夹中读取资源,必须用WWW的方式读取,必须要扩展名
 		/// </summary>
 		/// <returns>The data from streaming assets.</returns>
 		/// <param name="path">Path.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static T getDataFromStreamingAssets<T>(string path) where T : UnityEngine.Object
 		{
+			string fullpath = PLDGlobalDef.STREAMING_PATH + path;
+			WWW www = new WWW (fullpath);
 			
+			if (typeof(T) == typeof(UnityEngine.Texture)) {
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// Gets the asset bundle from streaming assets.
+		/// </summary>
+		/// <returns>The asset bundle from streaming assets.</returns>
+		/// <param name="name">Name AssetBundle的name.</param>
+		public static AssetBundle getAssetBundleFromStreamingAssets(string name) 
+		{
+			string fullpath = PLDGlobalDef.STREAMING_PATH + name;
+			WWW www = new WWW (fullpath);
+			return www.assetBundle;
 		}
 
+		/// <summary>
+		/// Gets the data editor.
+		/// 编辑器模式下获取资源 
+		/// </summary>
+		/// <returns>The data editor.</returns>
+		/// <param name="path">Path.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static T getDataEditor<T>(string path) where T : UnityEngine.Object
+		{
+		#if UNITY_EDITOR
+			T obj = AssetDatabase.LoadAssetAtPath<T>(path);
+			return obj;
+		#endif
+		}
 
 		/// <summary>
 		/// Gets the res data.
 		/// 获取资源
 		/// </summary>
 		/// <returns>The res data.</returns>
-		/// <param name="path">Path.</param>
+		/// <param name="path">Path 相对GAME_ASSETS的路径,必须带扩展名.</param>
 		/// <param name="loadType">Load type.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static T getResData<T>(string path, LoadType loadType) where T : UnityEngine.Object
 		{
+			#if UNITY_EDITOR
+				string fullpath = PLDGlobalDef.GAME_ASSET_PATH + path;
+				return getDataEditor<T>(fullpath);
+			#endif
+
 			switch(loadType){
 			case LoadType.LOAD_RESOURCES:
 

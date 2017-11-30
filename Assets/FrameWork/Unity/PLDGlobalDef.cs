@@ -79,7 +79,7 @@ namespace Pld{
 			#elif UNITY_ANDROID
 				return Application.streamingAssetsPath;
 			#elif UNITY_IOS
-				return Application.streamingAssetsPath;
+				return "file://" + Application.streamingAssetsPath;
 			#else
 				return Application.streamingAssetsPath;
 			#endif

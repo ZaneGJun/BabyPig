@@ -45,9 +45,9 @@ public class PoolTesteHandle : MonoBehaviour {
 		GameObject obj = Instantiate (AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ZExample/Pool/Model/TestObj.prefab"));
 		obj.name = obj.name.Replace ("(Clone)","");
 		return obj;
-#endif
-
+#else
 		return null;
+#endif
 	}
 
 	private GameObject genObject2(){
@@ -56,8 +56,6 @@ public class PoolTesteHandle : MonoBehaviour {
 		obj.name = obj.name.Replace ("(Clone)","");
 		return obj;
 #endif
-
-		return null;
 	}
 
 	private void destroyObj(GameObject obj) {

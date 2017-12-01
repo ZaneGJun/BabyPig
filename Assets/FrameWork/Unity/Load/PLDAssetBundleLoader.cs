@@ -7,6 +7,10 @@ namespace Pld
 {
 	public class PLDAssetBundleLoader : PLDMOSingleton<PLDAssetBundleLoader>
 	{
+		/////////////////////////////////////////////////////////////////////////////////
+
+		#region SyncLoad
+
 		/// <summary>
 		/// Loads the asset bundle.
 		/// 同步在路径读取AssetBundle
@@ -16,7 +20,7 @@ namespace Pld
 		/// </summary>
 		/// <returns>The asset bundle.</returns>
 		/// <param name="fullpath">Fullpath.</param>
-		public static AssetBundle LoadAssetBundleFullpath(string fullpath)
+		public AssetBundle LoadAssetBundleFullpath(string fullpath)
 		{
 			return AssetBundle.LoadFromFile (fullpath);
 		}
@@ -27,7 +31,7 @@ namespace Pld
 		/// </summary>
 		/// <returns>The from streaming assets.</returns>
 		/// <param name="assetbundle">Assetbundle.</param>
-		public static AssetBundle LoadFromStreamingAssets(string assetbundle)
+		public AssetBundle LoadFromStreamingAssets(string assetbundle)
 		{
 			string fullpath = PLDGlobalDef.STREAMING_PATH + "/" + assetbundle;
 			return LoadAssetBundleFullpath (fullpath);
@@ -38,11 +42,17 @@ namespace Pld
 		/// </summary>
 		/// <returns>The from persistant.</returns>
 		/// <param name="assetbundle">Assetbundle.</param>
-		public static AssetBundle LoadFromPersistant(string assetbundle)
+		public AssetBundle LoadFromPersistant(string assetbundle)
 		{
 			string fullpath = PLDGlobalDef.PERSISTENT_PATH + "/" + assetbundle;
 			return LoadAssetBundleFullpath (fullpath);
 		}
+
+		#endregion
+
+		/////////////////////////////////////////////////////////////////////////////////
+
+		#region AsyncLoad
 
 		/// <summary>
 		/// 加载协程实现.
@@ -63,19 +73,9 @@ namespace Pld
 		/// </summary>
 		/// <param name="fullpath">Fullpath.</param>
 		/// <param name="callback">Callback.</param>
-		void LoadAssetBundleAsync(string fullpath, Action<AssetBundle> callback)
+		void LoadAssetBundleFullpathAsync(string fullpath, Action<AssetBundle> callback)
 		{
 			StartCoroutine(LoadAsyncCoroutine(fullpath, callback));
-		}
-
-		/// <summary>
-		/// 从指定路径异步加载AssetBundle.
-		/// </summary>
-		/// <param name="fullpath">Fullpath.</param>
-		/// <param name="callback">Callback.</param>
-		public void LoadAssetBundleFullpathAsync(string fullpath, Action<AssetBundle> callback)
-		{
-			LoadAssetBundleAsync (fullpath, callback);
 		}
 
 		/// <summary>
@@ -100,6 +100,12 @@ namespace Pld
 			LoadAssetBundleFullpathAsync (fullpath, callback);
 		}
 
+		#endregion
+
+		/////////////////////////////////////////////////////////////////////////////////
+
+		#region WWWAsyncLoad
+
 		/// <summary>
 		/// 协程实现，用WWW方式
 		/// </summary>
@@ -117,23 +123,13 @@ namespace Pld
 		}
 
 		/// <summary>
-		/// 开启协程.
-		/// </summary>
-		/// <param name="fullpath">Fullpath.</param>
-		/// <param name="callback">Callback.</param>
-		void LoadAssetBundleWWWAsync(string fullpath, Action<AssetBundle> callback)
-		{
-			StartCoroutine (LoadFromWWWCoroutine (fullpath, callback));
-		}
-
-		/// <summary>
-		/// 从指定路径加载AssetBundle,用WWW的方式.
+		/// 开启协程从指定路径加载AssetBundle,用WWW的方式.
 		/// </summary>
 		/// <param name="fullpath">Fullpath.</param>
 		/// <param name="callback">Callback.</param>
 		public void LoadAssetBundleWWWFullpathAsync(string fullpath, Action<AssetBundle> callback)
 		{
-			LoadAssetBundleWWWAsync (fullpath, callback);
+			StartCoroutine (LoadFromWWWCoroutine (fullpath, callback));
 		}
 
 		/// <summary>
@@ -157,6 +153,8 @@ namespace Pld
 			string fullpath = PLDGlobalDef.PERSISTENT_PATH + "/" + assetbundle;
 			LoadAssetBundleWWWFullpathAsync (fullpath, callback);
 		}
+
+		#endregion
 	}
 }
 

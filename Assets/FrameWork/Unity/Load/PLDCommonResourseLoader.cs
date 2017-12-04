@@ -9,15 +9,7 @@ using UnityEditor;
 
 namespace Pld
 {
-	/// <summary>
-	/// PLD common resourse loader.
-	/// .统一Resources和AssetBundles加载
-	/// .类似的加载接口设计，包括同步与异步
-	/// .强引用计数管理，Load与Unload匹配
-	/// .支持按优先级加载
-	/// .支持配置系统开销，异步加载开销
-	/// </summary>
-	public class PLDCommonResourseLoader : PLDMOSingleton<PLDCommonResourseLoader>
+	public class PLDCommonResourseLoader : MonoBehaviour
 	{
 		//////////////////////////////////////////////////////////////////////////
 
@@ -51,12 +43,6 @@ namespace Pld
 			callback ((T)(req.asset));
 		}
 
-		#endregion
-
-		//////////////////////////////////////////////////////////////////////////
-
-		#region StreamingAssetsLoadWWW
-
 		/// <summary>
 		/// 开启协程异步从Resources中加载资源,完成执行回调.
 		/// </summary>
@@ -68,18 +54,28 @@ namespace Pld
 			StartCoroutine(LoadFromResourcesAsyncCoroutine<T>(path, callback));
 		}
 
+		#endregion
+
+		//////////////////////////////////////////////////////////////////////////
+
+		#region StreamingAssetsLoadWWW
+
 		/// <summary>
 		/// 协程实现异步读取StreamingAssets文件的资源，用WWW
 		/// </summary>
 		/// <returns>The from streaming assets async coroutine.</returns>
 		/// <param name="path">Path.</param>
 		/// <param name="callback">Callback.</param>
-		static IEnumerator LoadFromStreamingAssetsAsyncCoroutine(string path, Action<WWW> callback) 
+		static IEnumerator LoadWWWAsyncCoroutine(string path, Action<WWW> callback) 
 		{
 			WWW www = new WWW (path);
 			yield return www;
 
 			callback (www);
+
+			//释放www对象
+			www.Dispose();
+			www = null;
 		}
 		
 		/// <summary>
@@ -89,7 +85,19 @@ namespace Pld
 		/// <param name="callback">Callback,回调函数,返回成功加载的WWW对象作为参数.</param>
 		public void LoadFromStreamingAssetsWWWAsync(string path, Action<WWW> callback) 
 		{
-			StartCoroutine (LoadFromStreamingAssetsAsyncCoroutine(path, callback));
+			string fullpath = PLDGlobalDef.STREAMING_PATH + "/" + path;
+			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
+		}
+
+		/// <summary>
+		/// 开启协程用WWW方式异步加载Persistant文件夹中的资源.
+		/// </summary>
+		/// <param name="path">路径.</param>
+		/// <param name="callback">Callback,回调函数,返回成功加载的WWW对象作为参数.</param>
+		public void LoadFromPersistantWWWAsync(string path, Action<WWW> callback) 
+		{
+			string fullpath = PLDGlobalDef.STREAMING_PATH + "/" + path;
+			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
 		}
 
 		#endregion

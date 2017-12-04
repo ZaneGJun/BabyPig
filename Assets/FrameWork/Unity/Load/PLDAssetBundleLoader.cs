@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Pld
 {
-	public class PLDAssetBundleLoader : PLDMOSingleton<PLDAssetBundleLoader>
+	public class PLDAssetBundleLoader : MonoBehaviour
 	{
 		/////////////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ namespace Pld
 		/// </summary>
 		/// <param name="fullpath">Fullpath.</param>
 		/// <param name="callback">Callback.</param>
-		void LoadAssetBundleFullpathAsync(string fullpath, Action<AssetBundle> callback)
+		public void LoadAssetBundleFullpathAsync(string fullpath, Action<AssetBundle> callback)
 		{
 			StartCoroutine(LoadAsyncCoroutine(fullpath, callback));
 		}

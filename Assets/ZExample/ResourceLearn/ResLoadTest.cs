@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pld;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -28,6 +29,7 @@ public class ResLoadTest : MonoBehaviour {
 		//3.Initantiate
 		//StartCoroutine(loadAssetBundle());
 
+		PLDResourcesManager.Instance.toPrint ();;
 	}
 
 	void loadEditor()
@@ -47,9 +49,9 @@ public class ResLoadTest : MonoBehaviour {
 		//Debug.Log("obj name:" + obj.name);
 
 		//读取StreamingAssets中的prefab,失败,StreamingAssets中的文件必须用WWW读取
-		GameObject res = AssetDatabase.LoadAssetAtPath("Assets/StreamingAssets/Pre3.prefab", typeof(GameObject)) as GameObject ;
-		GameObject obj = Instantiate (res);
-		Debug.Log("obj name:" + obj.name);
+		//GameObject res = AssetDatabase.LoadAssetAtPath("Assets/StreamingAssets/Pre3.prefab", typeof(GameObject)) as GameObject ;
+		//GameObject obj = Instantiate (res);
+		//Debug.Log("obj name:" + obj.name);
 
 		//AssetBundle类型文件用AssetDatabase读取失败
 		//AssetBundle asset = AssetDatabase.LoadAssetAtPath<AssetBundle> ("Assets/Output/resourcelearn/pre3");

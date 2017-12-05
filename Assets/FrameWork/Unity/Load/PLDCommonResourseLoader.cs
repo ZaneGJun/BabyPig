@@ -37,10 +37,10 @@ namespace Pld
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		static IEnumerator LoadFromResourcesAsyncCoroutine<T>(string path, Action<T> callback) where T : UnityEngine.Object
 		{
-			ResourceRequest req = Resources.LoadAsync<T> (path);
+			ResourceRequest req = Resources.LoadAsync (path);
 			yield return req;
 
-			callback ((T)(req.asset));
+			callback ((T)req.asset);
 		}
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace Pld
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public void LoadFromResourcesAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
 		{
-			StartCoroutine(LoadFromResourcesAsyncCoroutine<T>(path, callback));
+			StartCoroutine(LoadFromResourcesAsyncCoroutine(path, callback));
 		}
 
 		#endregion

@@ -29,7 +29,7 @@ public class ResLoadTest : MonoBehaviour {
 		//3.Initantiate
 		//StartCoroutine(loadAssetBundle());
 
-		PLDResourcesManager.Instance.toPrint ();;
+		PLDResourcesManager.Instance.toPrint ();
 	}
 
 	void loadEditor()

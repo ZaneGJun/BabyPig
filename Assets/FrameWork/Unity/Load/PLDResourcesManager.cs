@@ -41,8 +41,8 @@ namespace Pld
 		/// 同步加载资源,Resources实现,非AssetBundle类资源只能加载Resources文件夹中的.
 		/// AssetBundle加载请用重载的接口AssetBundle Load(string assetBundlePath, LoadType loadType) 
 		/// </summary>
-		/// <param name="path">Path.</param>
-		/// <param name="loadType">Load type.</param>
+		/// <param name="path">相对于Resources目录的路径，不用带扩展名.</param>
+		/// <param name="loadType">只有LOAD_FROM_RESOURCES是可选的.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public T Load<T>(string path, LoadType loadType) where T : UnityEngine.Object
 		{
@@ -66,8 +66,8 @@ namespace Pld
 		/// <summary>
 		/// 同步加载AssetBundle，用AssetBundle实现，可从Resources,StreamingAssets,Persistant中加载
 		/// </summary>
-		/// <param name="assetBundlePath">Asset bundle path.</param>
-		/// <param name="loadType">Load type.</param>
+		/// <param name="assetBundlePath">相对于加载目录的路径,不用扩展名.</param>
+		/// <param name="loadType">LOAD_FROM_RESOURCES,LOAD_COMMON,LOAD_FROM_STREAMING_ASSETS,LOAD_FROM_PERSISTANT皆可选.</param>
 		public AssetBundle Load(string assetBundlePath, LoadType loadType) 
 		{
 			switch (loadType) {
@@ -89,9 +89,9 @@ namespace Pld
 		/// 非AssetBundle资源要从StreamingAsset,Persistant文件夹中加载必须用WWW方式,
 		/// 请用重载的方法LoadAsync(string path, LoadType loadType, Action<WWW> callback) 
 		/// </summary>
-		/// <param name="path">Path.</param>
-		/// <param name="loadType">Load type.</param>
-		/// <param name="callback">Callback.</param>
+		/// <param name="path">相对于Resources目录的路径，不用带扩展名.</param>
+		/// <param name="loadType">只有LOAD_FROM_RESOURCES是可选的.</param>
+		/// <param name="callback">回调加载的资源.</param>
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public void LoadAsync<T>(string path, LoadType loadType, Action<T> callback) where T : UnityEngine.Object
 		{

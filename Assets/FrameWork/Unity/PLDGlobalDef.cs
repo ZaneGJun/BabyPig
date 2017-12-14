@@ -74,16 +74,16 @@ namespace Pld{
 		{
 			get 
 			{
-			#if UNITY_EDITOR || UNITY_STANDALONE_WIN
-				return "file://" + Application.streamingAssetsPath;
-			#elif UNITY_ANDROID
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+                return Application.streamingAssetsPath;
+#elif UNITY_ANDROID
 				return Application.streamingAssetsPath;
-			#elif UNITY_IOS
+#elif UNITY_IOS
 				return "file://" + Application.streamingAssetsPath;
-			#else
+#else
 				return Application.streamingAssetsPath;
-			#endif
-			}
+#endif
+            }
 		}
 		
 		

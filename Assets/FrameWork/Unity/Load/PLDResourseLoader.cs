@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace Pld
 {
-	public class PLDCommonResourseLoader : MonoBehaviour
+	public class PLDResourseLoader : MonoBehaviour
 	{
 		//////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +85,7 @@ namespace Pld
 		/// <param name="callback">Callback,回调函数,返回成功加载的WWW对象作为参数.</param>
 		public void LoadFromStreamingAssetsWWWAsync(string path, Action<WWW> callback) 
 		{
-			string fullpath = PLDGlobalDef.STREAMING_PATH + "/" + path;
+			string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + path;
 			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
 		}
 
@@ -96,7 +96,7 @@ namespace Pld
 		/// <param name="callback">Callback,回调函数,返回成功加载的WWW对象作为参数.</param>
 		public void LoadFromPersistantWWWAsync(string path, Action<WWW> callback) 
 		{
-			string fullpath = PLDGlobalDef.STREAMING_PATH + "/" + path;
+			string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + path;
 			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
 		}
 

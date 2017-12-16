@@ -7,7 +7,7 @@ public class ResManagerTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        LoadResourcesTest();
+        //LoadResourcesTest();
 
         LoadAssetBundleTest ();
 	}
@@ -57,11 +57,11 @@ public class ResManagerTest : MonoBehaviour {
         Debug.Assert(assetbundleStreamingAssets != null,"load assetbundle streamingAssets failed");
         GameObject objStreamingAssets = Instantiate(assetbundleStreamingAssets.LoadAsset<GameObject>("Pre3"));
         Debug.Log("obj name:" + objStreamingAssets.name);
-
+        
 #if !UNITY_EDITOR
         //Persistent
         AssetBundle assetbundlePersistent = PLDResourcesManager.Instance.Load("pre3", LoadType.LOAD_FROM_PERSISTANT);
-        Debug.Assert(assetbundlePersistent != null, "load assetbundle streamingAssets failed");
+        Debug.Assert(assetbundlePersistent != null, "load assetbundle persistent failed");
         GameObject objPersistent = Instantiate(assetbundlePersistent.LoadAsset<GameObject>("Pre3"));
         Debug.Log("obj name:" + objPersistent.name);
 #endif
@@ -73,7 +73,7 @@ public class ResManagerTest : MonoBehaviour {
 
 #if !UNITY_EDITOR
         //AssetBundle实现,Persistent
-         PLDResourcesManager.Instance.LoadAsync("Pre3", LoadType.LOAD_FROM_PERSISTANT, onLoadAssetBundleTest);
+        PLDResourcesManager.Instance.LoadAsync("Pre3", LoadType.LOAD_FROM_PERSISTANT, onLoadAssetBundleTest);
 #endif
 
         //WWW实现,StreamingAssets
@@ -81,7 +81,7 @@ public class ResManagerTest : MonoBehaviour {
 
 #if !UNITY_EDITOR
         //WWW实现,Persistent
-         PLDResourcesManager.Instance.LoadAsync("Pre3", LoadType.LOAD_FROM_PERSISTANT, onLoadAssetBundleWWWTest);
+        PLDResourcesManager.Instance.LoadAsync("Pre3", LoadType.LOAD_FROM_PERSISTANT, onLoadAssetBundleWWWTest);
 #endif
     }
 

@@ -118,7 +118,8 @@ namespace Pld
 		#if UNITY_EDITOR
 			T obj = AssetDatabase.LoadAssetAtPath<T>(path);
 			return obj;
-		#endif
+#endif
+            return null;
 		}
 
 		#endregion

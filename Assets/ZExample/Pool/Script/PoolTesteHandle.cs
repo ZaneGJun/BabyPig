@@ -56,6 +56,7 @@ public class PoolTesteHandle : MonoBehaviour {
 		obj.name = obj.name.Replace ("(Clone)","");
 		return obj;
 #endif
+        return null;
 	}
 
 	private void destroyObj(GameObject obj) {

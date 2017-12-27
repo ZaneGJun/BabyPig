@@ -92,8 +92,8 @@ namespace Pld
             PLDResourceLoaderAbstract loader;
             if(!dict.TryGetValue(url, out loader))
             {
-                loader = new PLDResourceLoaderAbstract();
-                loader.Init();
+                loader = new T();
+                loader.Init(url);
             }
 
             // 增加一次引用

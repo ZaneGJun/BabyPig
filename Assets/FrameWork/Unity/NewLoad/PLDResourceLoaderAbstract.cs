@@ -84,27 +84,27 @@ namespace Pld
         /// <summary>
         /// 开始回调
         /// </summary>
-        public StartDelgate mStartCallback { private get; set; }
+        public StartDelgate StartCallback { private get; set; }
 
         /// <summary>
         /// 进行回调
         /// </summary>
-        public ProcessDelgate mProcessCallback { private get; set; }
+        public ProcessDelgate ProcessCallback { private get; set; }
 
         /// <summary>
         /// 成功回调
         /// </summary>
-        public SuccessDelgate mSuccessCallback { private get; set; }
+        public SuccessDelgate SuccessCallback { private get; set; }
 
         /// <summary>
         /// 失败回调
         /// </summary>
-        public ErrorDelgate mErrorCallbcak { private get; set; }
+        public ErrorDelgate ErrorCallbcak { private get; set; }
 
         /// <summary>
         /// 完成回调
         /// </summary>
-        public FinishDelgate mFinishCallback { private get; set; }
+        public FinishDelgate FinishCallback { private get; set; }
 
         #endregion
 
@@ -116,7 +116,7 @@ namespace Pld
         /// <summary>
         /// 初始化
         /// </summary>
-        public virtual void Init(string url)
+        public virtual void Init(string url, FinishDelgate finishcallback = null)
         {
             ResultObj = null;
             IsReadyDispose = false;
@@ -130,11 +130,12 @@ namespace Pld
 
             Process = 0.0F;
 
-            mStartCallback = null;
-            mProcessCallback = null;
-            mSuccessCallback = null;
-            mErrorCallbcak = null;
-            mFinishCallback = null;
+            StartCallback = null;
+            ProcessCallback = null;
+            SuccessCallback = null;
+            ErrorCallbcak = null;
+
+            FinishCallback = finishcallback;
         }
 
         /// <summary>
@@ -172,56 +173,63 @@ namespace Pld
         /// <summary>
         /// 开始
         /// </summary>
-        public virtual void OnStart()
+        /// <param name="msg">信息</param>
+        public virtual void OnStart(string msg = null)
         {
-            Message = "Start";
+            Message = string.IsNullOrEmpty(msg) ? "Loader OnStart" : msg;
             Process = 0.0F;
 
-            if (mStartCallback != null)
-                mStartCallback();
+            if (StartCallback != null)
+                StartCallback();
         }
 
         /// <summary>
         /// 进度变化
         /// </summary>
-        /// <param name="process"></param>
-        public virtual void OnProcess(float process)
+        /// <param name="process">进度，[0.0F,1.0F]区间</param>
+        /// <param name="msg">信息</param>
+        public virtual void OnProcess(float process, string msg = null)
         {
-            Message = "Process";
+            Message = string.IsNullOrEmpty(msg) ? string.Format("Loader OnProcess:{0}",process) : msg;
             Process = process;
 
-            if (mProcessCallback != null)
-                mProcessCallback(Process);
+            if (ProcessCallback != null)
+                ProcessCallback(Process);
         }
 
         /// <summary>
         /// 成功
         /// </summary>
-        public virtual void OnSuccess()
+        /// <param name="msg">信息</param>
+        public virtual void OnSuccess(string msg = null)
         {
-            Message = "Success";
-            if (mSuccessCallback != null)
-                mSuccessCallback(ResultObj);
+            Message = string.IsNullOrEmpty(msg) ? "Loader OnSucccess" : msg;
+
+            if (SuccessCallback != null)
+                SuccessCallback(ResultObj);
         }
 
         /// <summary>
         /// 出错
         /// </summary>
-        public virtual void OnError(string msg = "")
+        /// <param name="msg">信息</param>
+        public virtual void OnError(string msg = null)
         {
-            Message = msg == "" ? "Error" : msg;
-            if (mErrorCallbcak != null)
-                mErrorCallbcak(Message);
+            Message = string.IsNullOrEmpty(msg) ? "Loader OnError" : msg;
+
+            if (ErrorCallbcak != null)
+                ErrorCallbcak(Message);
         }
 
         /// <summary>
         /// 加载完成
         /// </summary>
-        /// <param name="resultObj"></param>
-        public virtual void OnFinish(object resultObj)
+        /// <param name="resultObj">加载完成的结果</param>
+        /// <param name="msg">信息</param>
+        public virtual void OnFinish(object resultObj, string msg = null)
         {
             ResultObj = resultObj;
-            Process = 100.0F;
+            Process = 1.0F;
 
             IsError = resultObj == null;
             IsSuccess = !IsError;
@@ -232,10 +240,15 @@ namespace Pld
             if (IsError)
                 OnError();
 
-            IsFinish = true;
-            if(mFinishCallback != null)
+            if(msg != null)
             {
-                mFinishCallback(IsSuccess, ResultObj);
+                Message = msg;
+            }
+
+            IsFinish = true;
+            if(FinishCallback != null)
+            {
+                FinishCallback(IsSuccess, ResultObj);
             }
         }
     }

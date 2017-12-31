@@ -49,7 +49,8 @@ namespace Pld
         /// <summary>
         /// 准备要进行Dispose的Loader
         /// </summary>
-        protected static readonly Dictionary<PLDResourceLoaderAbstract, float> mUnUsesLoaders;
+        protected static readonly Dictionary<PLDResourceLoaderAbstract, float> mUnUsesLoaders = 
+            new Dictionary<PLDResourceLoaderAbstract, float>();
 
         #endregion
 
@@ -82,10 +83,11 @@ namespace Pld
         /// <summary>
         /// 获取Loader对象
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static T GetResourceLoader<T>(string url) where T : PLDResourceLoaderAbstract, new()
+        /// <typeparam name="T"> T必须继承PLDResourceLoaderAbstract且具有构造函数的类</typeparam>
+        /// <param name="url">url</param>
+        /// <param name="finishcallback">完成回调</param>
+        /// <returns>返回一个T的可用实例</returns>
+        public static T GetResourceLoader<T>(string url, PLDResourceLoaderAbstract.FinishDelgate finishcallback = null) where T : PLDResourceLoaderAbstract, new()
         {
             Dictionary<string, PLDResourceLoaderAbstract> dict = GetTypeDict(typeof(T));
 
@@ -93,7 +95,7 @@ namespace Pld
             if(!dict.TryGetValue(url, out loader))
             {
                 loader = new T();
-                loader.Init(url);
+                loader.Init(url, finishcallback);
             }
 
             // 增加一次引用

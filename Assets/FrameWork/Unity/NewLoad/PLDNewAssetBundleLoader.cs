@@ -23,7 +23,6 @@ namespace Pld
         public override void Init(string url, FinishDelgate finishcallback = null)
         {
             base.Init(url, finishcallback);
-
         }
 
         protected virtual void StartLoad()
@@ -62,7 +61,7 @@ namespace Pld
                 yield break;
             }
 
-            OnFinish(req);
+            OnFinish(req.assetBundle);
         }
     }
 }

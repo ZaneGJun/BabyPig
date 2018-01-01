@@ -19,7 +19,7 @@ public class NewLoaderTest : MonoBehaviour {
 
         //mWWWLoader = PLDWWWLoader.Load(fullpath, LoaderFinish);
 
-        mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Sync, AssetBundleLoaderFinish);
+        mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
     }
 	
 	// Update is called once per frame
@@ -71,6 +71,7 @@ public class NewLoaderTest : MonoBehaviour {
         {
             Debug.Assert(false, "AssetBundle load failed");
         }
+
 
         Debug.Log(string.Format("Use time :{0}", mAssetBundleLoader.UseTime));
         //进行一次释放

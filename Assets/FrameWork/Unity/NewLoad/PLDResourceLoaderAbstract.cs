@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Pld
 {
@@ -106,6 +107,19 @@ namespace Pld
         /// </summary>
         public FinishDelgate FinishCallback { private get; set; }
 
+        private float mInitTime = -1;
+        private float mFinishTime = -1;
+
+        /// <summary>
+        /// 用时
+        /// </summary>
+        public float UseTime {
+            get
+            {
+                return (mFinishTime - mInitTime);
+            }
+        }
+
         #endregion
 
         public PLDResourceLoaderAbstract()
@@ -118,6 +132,7 @@ namespace Pld
         /// </summary>
         public virtual void Init(string url, FinishDelgate finishcallback = null)
         {
+            mInitTime = Time.realtimeSinceStartup;
             ResultObj = null;
             IsReadyDispose = false;
 
@@ -167,7 +182,7 @@ namespace Pld
         /// </summary>
         public virtual void DoDispose()
         {
-
+            
         }
 
         /// <summary>
@@ -233,6 +248,8 @@ namespace Pld
 
             IsError = resultObj == null;
             IsSuccess = !IsError;
+
+            mFinishTime = Time.realtimeSinceStartup;
 
             if (IsSuccess)
                 OnSuccess();

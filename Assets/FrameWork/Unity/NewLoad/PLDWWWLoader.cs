@@ -86,7 +86,7 @@ namespace Pld
 
             if (IsReadyDispose)
             {
-                Debug.LogError(string.Format("[KWWWLoader]Too early release: { 0}", Url));
+                Debug.LogError(string.Format("[PLDWWWLoader]Too early release: { 0}", Url));
                 OnFinish(null);
                 yield break;
             }
@@ -127,7 +127,6 @@ namespace Pld
         public override void OnFinish(object resultObj, string msg = null)
         {
             base.OnFinish(resultObj, msg);
-
         }
 
     }

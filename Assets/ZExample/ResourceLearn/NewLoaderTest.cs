@@ -7,6 +7,7 @@ public class NewLoaderTest : MonoBehaviour {
 
     private PLDWWWLoader mWWWLoader = null;
     private PLDNewAssetBundleLoader mAssetBundleLoader = null;
+    private PLDResourceResLoader mResourceResLoader = null;
 
     private void Awake()
     {
@@ -19,7 +20,9 @@ public class NewLoaderTest : MonoBehaviour {
 
         //mWWWLoader = PLDWWWLoader.Load(fullpath, LoaderFinish);
 
-        mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
+        //mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
+
+        mResourceResLoader = PLDResourceResLoader.Load("Pre2", LoadOption.Async, ResourceResLoaderFinish);
     }
 	
 	// Update is called once per frame
@@ -32,6 +35,11 @@ public class NewLoaderTest : MonoBehaviour {
         if (mAssetBundleLoader != null)
         {
             Debug.Log(string.Format("AssetBundleLoader refCount:{0} msg:{1}", mAssetBundleLoader.RefCount, mAssetBundleLoader.Message));
+        }
+
+        if (mResourceResLoader != null)
+        {
+            Debug.Log(string.Format("ResourceResLoader refCount:{0} msg:{1}", mResourceResLoader.RefCount, mResourceResLoader.Message));
         }
     }
 
@@ -76,5 +84,28 @@ public class NewLoaderTest : MonoBehaviour {
         Debug.Log(string.Format("Use time :{0}", mAssetBundleLoader.UseTime));
         //进行一次释放
         PLDResourceLoaderCache.ReleaseLoader(mAssetBundleLoader);
+    }
+
+    private void ResourceResLoaderFinish(bool isOk, object retObj)
+    {
+        if (isOk)
+        {
+            GameObject gameObj = retObj as GameObject;
+            if (gameObj)
+            {
+                Debug.Assert(gameObj != null, "ResourceResLoader failed");
+                GameObject gameobj = Instantiate(gameObj);
+                Debug.Log("gameobj name:" + gameobj.name);
+            }
+        }
+        else
+        {
+            Debug.Assert(false, "AssetBundle load failed");
+        }
+
+
+        //Debug.Log(string.Format("Use time :{0}", mResourceResLoader.UseTime));
+        //进行一次释放
+        //PLDResourceLoaderCache.ReleaseLoader(mResourceResLoader);
     }
 }

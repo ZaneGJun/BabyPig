@@ -6,31 +6,32 @@ using UnityEngine;
 namespace Pld
 {
     /// <summary>
-    /// 加载AssetBundle
+    /// 从Resources中加载资源
     /// </summary>
-    class PLDNewAssetBundleLoader : PLDResourceLoaderAbstract
+    class PLDResourceResLoader : PLDResourceLoaderAbstract
     {
         protected LoadOption mLoadOption;
 
         /// <summary>
-        /// 静态函数，加载AssetBundle资源
+        /// 静态函数，加载资源
         /// </summary>
         /// <param name="url">路径</param>
-        /// <param name="option">选项</param>
+        /// <param name="option">可选项</param>
         /// <param name="callback">完成回调</param>
         /// <returns></returns>
-        public static PLDNewAssetBundleLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
+        public static PLDResourceResLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
         {
-            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDNewAssetBundleLoader>(url, callback);
+            PLDResourceResLoader loader;
+            loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(url, callback);
 
             loader.mLoadOption = option;
             loader.StartLoad();
 
-            return loader as PLDNewAssetBundleLoader;
+            return loader;
         }
 
         /// <summary>
-        /// 初始化
+        /// 继承的初始化函数
         /// </summary>
         /// <param name="url">路径</param>
         /// <param name="finishcallback">完成回调</param>
@@ -40,17 +41,17 @@ namespace Pld
         }
 
         /// <summary>
-        /// 开始加载
+        /// 开始加载，根据可选项进行不同处理
         /// </summary>
-        protected virtual void StartLoad()
+        protected void StartLoad()
         {
             OnStart();
 
             if(mLoadOption == LoadOption.Sync)
             {
                 //同步加载
-                AssetBundle result = AssetBundle.LoadFromFile(Url);
-                OnFinish(result);
+                UnityEngine.Object obj = Resources.Load(Url);
+                OnFinish(obj);
             }
             else if(mLoadOption == LoadOption.Async)
             {
@@ -59,7 +60,7 @@ namespace Pld
             }
             else
             {
-                OnFinish(null, string.Format("[PLDNewAssetBundleLoader] LoadOption error:{0}", mLoadOption));
+                OnFinish(null, string.Format("[PLDResourceResLoader] LoadOption error:{0}",mLoadOption));
             }
         }
 
@@ -67,9 +68,9 @@ namespace Pld
         /// 异步加载协程
         /// </summary>
         /// <returns></returns>
-        protected IEnumerator DoLoadAsync()
+        IEnumerator DoLoadAsync()
         {
-            AssetBundleCreateRequest req = AssetBundle.LoadFromFileAsync(Url);
+            ResourceRequest req = Resources.LoadAsync(Url);
 
             while(!req.isDone)
             {
@@ -81,12 +82,13 @@ namespace Pld
 
             if (IsReadyDispose)
             {
-                Debug.LogError(string.Format("[PLDNewAssetBundleLoader]Too early release: { 0}", Url));
+                Debug.LogError(string.Format("[PLDResourceResLoader]Too early release: { 0}", Url));
                 OnFinish(null);
                 yield break;
             }
 
-            OnFinish(req.assetBundle);
+            //通知回调结果
+            OnFinish(req.asset);
         }
     }
 }

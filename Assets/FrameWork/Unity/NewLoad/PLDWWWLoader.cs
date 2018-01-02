@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Pld
 {
+    /// <summary>
+    /// 加载WWW对象
+    /// </summary>
     class PLDWWWLoader : PLDResourceLoaderAbstract
     {
 

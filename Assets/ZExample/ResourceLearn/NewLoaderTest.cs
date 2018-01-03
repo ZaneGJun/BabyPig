@@ -11,18 +11,17 @@ public class NewLoaderTest : MonoBehaviour {
 
     private void Awake()
     {
-        
     }
 
     // Use this for initialization
     void Start () {
-        string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + "Pre3";
+        //string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + "Pre3";
 
         //mWWWLoader = PLDWWWLoader.Load(fullpath, LoaderFinish);
 
         //mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
 
-        mResourceResLoader = PLDResourceResLoader.Load("Pre2", LoadOption.Async, ResourceResLoaderFinish);
+        //mResourceResLoader = PLDResourceResLoader.Load("Pre2", LoadOption.Async, ResourceResLoaderFinish);
     }
 	
 	// Update is called once per frame

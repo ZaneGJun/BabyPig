@@ -119,7 +119,6 @@ namespace Pld
 			T obj = AssetDatabase.LoadAssetAtPath<T>(path);
 			return obj;
 #endif
-            return null;
 		}
 
 		#endregion

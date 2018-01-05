@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace Pld
 {
-	public class PLDResourseLoader : MonoBehaviour
+	public class PLDSimpleResourseLoader 
 	{
 		//////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ namespace Pld
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public void LoadFromResourcesAsync<T>(string path, Action<T> callback) where T : UnityEngine.Object
 		{
-			StartCoroutine(LoadFromResourcesAsyncCoroutine(path, callback));
+			PLDResourcesManager.Instance.StartCoroutine(LoadFromResourcesAsyncCoroutine(path, callback));
 		}
 
 		#endregion
@@ -86,7 +86,7 @@ namespace Pld
 		public void LoadFromStreamingAssetsWWWAsync(string path, Action<WWW> callback) 
 		{
 			string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + path;
-			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
+			PLDResourcesManager.Instance.StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace Pld
 		public void LoadFromPersistantWWWAsync(string path, Action<WWW> callback) 
 		{
 			string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + path;
-			StartCoroutine (LoadWWWAsyncCoroutine(fullpath, callback));
+            PLDResourcesManager.Instance.StartCoroutine(LoadWWWAsyncCoroutine(fullpath, callback));
 		}
 
 		#endregion

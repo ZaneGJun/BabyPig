@@ -8,7 +8,7 @@ namespace Pld
     /// <summary>
     /// 加载AssetBundle
     /// </summary>
-    class PLDNewAssetBundleLoader : PLDResourceLoaderAbstract
+    class PLDAssetBundleLoader : PLDLoaderAbstract
     {
         protected LoadOption mLoadOption;
 
@@ -19,14 +19,14 @@ namespace Pld
         /// <param name="option">选项</param>
         /// <param name="callback">完成回调</param>
         /// <returns></returns>
-        public static PLDNewAssetBundleLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
+        public static PLDAssetBundleLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
         {
-            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDNewAssetBundleLoader>(url, callback);
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetBundleLoader>(url, callback);
 
             loader.mLoadOption = option;
             loader.StartLoad();
 
-            return loader as PLDNewAssetBundleLoader;
+            return loader as PLDAssetBundleLoader;
         }
 
         /// <summary>

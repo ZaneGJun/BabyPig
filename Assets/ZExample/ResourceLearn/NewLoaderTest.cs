@@ -6,7 +6,7 @@ using Pld;
 public class NewLoaderTest : MonoBehaviour {
 
     private PLDWWWLoader mWWWLoader = null;
-    private PLDNewAssetBundleLoader mAssetBundleLoader = null;
+    private PLDAssetBundleLoader mAssetBundleLoader = null;
     private PLDResourceResLoader mResourceResLoader = null;
 
     private void Awake()

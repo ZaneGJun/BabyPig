@@ -8,21 +8,21 @@ namespace Pld
     /// <summary>
     /// 从Resources中加载资源
     /// </summary>
-    class PLDResourceResLoader : PLDResourceLoaderAbstract
+    class PLDResourceResLoader : PLDLoaderAbstract
     {
         protected LoadOption mLoadOption;
 
         /// <summary>
         /// 静态函数，加载资源
         /// </summary>
-        /// <param name="url">路径</param>
+        /// <param name="path">路径</param>
         /// <param name="option">可选项</param>
         /// <param name="callback">完成回调</param>
         /// <returns></returns>
-        public static PLDResourceResLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
+        public static PLDResourceResLoader Load(string path, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
         {
             PLDResourceResLoader loader;
-            loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(url, callback);
+            loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(path, callback);
 
             loader.mLoadOption = option;
             loader.StartLoad();
@@ -33,11 +33,11 @@ namespace Pld
         /// <summary>
         /// 继承的初始化函数
         /// </summary>
-        /// <param name="url">路径</param>
+        /// <param name="path">路径</param>
         /// <param name="finishcallback">完成回调</param>
-        public override void Init(string url, FinishDelgate finishcallback = null)
+        public override void Init(string path, FinishDelgate finishcallback = null)
         {
-            base.Init(url, finishcallback);
+            base.Init(path, finishcallback);
         }
 
         /// <summary>

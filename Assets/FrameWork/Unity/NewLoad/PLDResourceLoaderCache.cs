@@ -10,8 +10,8 @@ namespace Pld
         /// <summary>
         /// 对象池字典
         /// </summary>
-        protected static Dictionary<Type, Dictionary<string,PLDResourceLoaderAbstract>> mLoaderDictionary = 
-            new Dictionary<Type, Dictionary<string, PLDResourceLoaderAbstract>>();
+        protected static Dictionary<Type, Dictionary<string,PLDLoaderAbstract>> mLoaderDictionary = 
+            new Dictionary<Type, Dictionary<string, PLDLoaderAbstract>>();
 
         #region 垃圾回收 Garbage Collect
 
@@ -43,23 +43,23 @@ namespace Pld
         /// <summary>
         /// 缓存起来要删掉的，供DoGarbageCollect函数用, 避免重复的new List
         /// </summary>
-        private static readonly List<PLDResourceLoaderAbstract> mCacheLoaderToRemoveFromUnUsed =
-            new List<PLDResourceLoaderAbstract>();
+        private static readonly List<PLDLoaderAbstract> mCacheLoaderToRemoveFromUnUsed =
+            new List<PLDLoaderAbstract>();
 
         /// <summary>
         /// 准备要进行Dispose的Loader
         /// </summary>
-        protected static readonly Dictionary<PLDResourceLoaderAbstract, float> mUnUsesLoaders = 
-            new Dictionary<PLDResourceLoaderAbstract, float>();
+        protected static readonly Dictionary<PLDLoaderAbstract, float> mUnUsesLoaders = 
+            new Dictionary<PLDLoaderAbstract, float>();
 
         #endregion
 
-        public static Dictionary<string, PLDResourceLoaderAbstract> GetTypeDict(Type type)
+        public static Dictionary<string, PLDLoaderAbstract> GetTypeDict(Type type)
         {
-            Dictionary<string, PLDResourceLoaderAbstract> typesDict;
+            Dictionary<string, PLDLoaderAbstract> typesDict;
             if (!mLoaderDictionary.TryGetValue(type, out typesDict))
             {
-                typesDict = mLoaderDictionary[type] = new Dictionary<string, PLDResourceLoaderAbstract>();
+                typesDict = mLoaderDictionary[type] = new Dictionary<string, PLDLoaderAbstract>();
             }
             return typesDict;
         }
@@ -72,7 +72,7 @@ namespace Pld
         public static int GetRefCount<T>(string url)
         {
             var dict = GetTypeDict(typeof(T));
-            PLDResourceLoaderAbstract loader;
+            PLDLoaderAbstract loader;
             if (dict.TryGetValue(url, out loader))
             {
                 return loader.RefCount;
@@ -87,11 +87,11 @@ namespace Pld
         /// <param name="url">url</param>
         /// <param name="finishcallback">完成回调</param>
         /// <returns>返回一个T的可用实例</returns>
-        public static T GetResourceLoader<T>(string url, PLDResourceLoaderAbstract.FinishDelgate finishcallback = null) where T : PLDResourceLoaderAbstract, new()
+        public static T GetResourceLoader<T>(string url, PLDLoaderAbstract.FinishDelgate finishcallback = null) where T : PLDLoaderAbstract, new()
         {
-            Dictionary<string, PLDResourceLoaderAbstract> dict = GetTypeDict(typeof(T));
+            Dictionary<string, PLDLoaderAbstract> dict = GetTypeDict(typeof(T));
 
-            PLDResourceLoaderAbstract loader;
+            PLDLoaderAbstract loader;
             if(!dict.TryGetValue(url, out loader))
             {
                 loader = new T();
@@ -116,8 +116,11 @@ namespace Pld
         /// </summary>
         /// <param name="loader"></param>
         /// <param name="gcNow">是否立即执行GC</param>
-        public static void ReleaseLoader(PLDResourceLoaderAbstract loader, bool gcNow = false)
+        public static void ReleaseLoader(PLDLoaderAbstract loader, bool gcNow = false)
         {
+            if (loader == null)
+                return;
+
             //减少一次引用
             loader.Release();
 

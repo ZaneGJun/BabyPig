@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Pld
 {
-    abstract class PLDResourceLoaderAbstract : PLDRefObject, IPLDDisposeObject
+    abstract class PLDLoaderAbstract : PLDRefObject, IPLDDisposeObject
     {
         #region 定义委托
 
@@ -122,7 +122,7 @@ namespace Pld
 
         #endregion
 
-        public PLDResourceLoaderAbstract()
+        public PLDLoaderAbstract()
         {
             
         }
@@ -180,7 +180,7 @@ namespace Pld
         /// <summary>
         /// 释放对象时进行的操作
         /// </summary>
-        public virtual void DoDispose()
+        protected virtual void DoDispose()
         {
             
         }

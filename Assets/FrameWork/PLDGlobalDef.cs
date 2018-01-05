@@ -36,42 +36,12 @@ namespace Pld{
 
     public static class PLDGlobalDef
     {
-        /// <summary>
-        /// 游戏资源存放相对地址
-        /// </summary>
-        public static string GAME_ASSET_PATH
-        {
-            get
-            {
-#if UNITY_EDITOR
-                return "Assets/GameAssets";
-#else
-				return "GameAssets";
-#endif
-            }
-        }
+        // 游戏资源存放相对地址
+        public const string GAME_ASSET_PATH = "GameAssets";
 
-        /// <summary>
-        /// 临时目录
-        /// </summary>
-        public static string GAME_TEMP_PATH 
-        {
-            get
-            {
-                return "_Temp";
-            }
-        }
+        public const string GAME_TEMP_PATH = "_Temp";
 
-        /// <summary>
-        /// 游戏缓存目录
-        /// </summary>
-        public static string GAME_CACHE_PATH
-        {
-            get
-            {
-                return "_Cache";
-            }
-        }
+        public const string GAME_CACHE_PATH = "_Cache";
 
         /// <summary>
         /// 一个可读可写的目录，程序安装后生成

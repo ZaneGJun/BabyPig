@@ -22,17 +22,17 @@ namespace Pld
 		LOAD_FROM_PERSISTANT,
 	}
 
-	[RequireComponent(typeof(PLDAssetBundleLoader))]
-	[RequireComponent(typeof(PLDResourseLoader))]
+	[RequireComponent(typeof(PLDSimpleAssetBundleLoader))]
+	[RequireComponent(typeof(PLDSimpleResourseLoader))]
 	public class PLDResourcesManager : PLDMOSingleton<PLDResourcesManager>
 	{
 			
-		private PLDAssetBundleLoader mAssetBundleLoader;
-		private PLDResourseLoader mResourcesLoader;
+		private PLDSimpleAssetBundleLoader mAssetBundleLoader;
+		private PLDSimpleResourseLoader mResourcesLoader;
 
 		public override void Init() {
-			mAssetBundleLoader = GetComponent<PLDAssetBundleLoader> ();
-			mResourcesLoader = GetComponent<PLDResourseLoader> ();
+			mAssetBundleLoader = GetComponent<PLDSimpleAssetBundleLoader> ();
+			mResourcesLoader = GetComponent<PLDSimpleResourseLoader> ();
 
 			Debug.Assert (mAssetBundleLoader != null && mResourcesLoader != null, "PLDResourcesManager Init false, mAssetBundleLoader or mResourcesLoader is null");
 		}

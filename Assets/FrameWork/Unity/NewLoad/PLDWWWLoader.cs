@@ -8,7 +8,7 @@ namespace Pld
     /// <summary>
     /// 加载WWW对象
     /// </summary>
-    class PLDWWWLoader : PLDResourceLoaderAbstract
+    class PLDWWWLoader : PLDLoaderAbstract
     {
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Pld
         /// <summary>
         /// 进行释放
         /// </summary>
-        public override void DoDispose()
+        protected override void DoDispose()
         {
             base.DoDispose();
 

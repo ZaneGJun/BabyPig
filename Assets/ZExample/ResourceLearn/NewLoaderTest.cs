@@ -8,6 +8,7 @@ public class NewLoaderTest : MonoBehaviour {
     private PLDWWWLoader mWWWLoader = null;
     private PLDAssetBundleLoader mAssetBundleLoader = null;
     private PLDResourceResLoader mResourceResLoader = null;
+    private PLDAssetFileLoader mAssetFileLoader = null;
 
     private void Awake()
     {
@@ -22,6 +23,8 @@ public class NewLoaderTest : MonoBehaviour {
         //mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
 
         //mResourceResLoader = PLDResourceResLoader.Load("Pre2", LoadOption.Async, ResourceResLoaderFinish);
+
+        mAssetFileLoader = PLDAssetFileLoader.Load("Pre2", LoadOption.Async, AssetFileLoaderFinish);
     }
 	
 	// Update is called once per frame
@@ -39,6 +42,11 @@ public class NewLoaderTest : MonoBehaviour {
         if (mResourceResLoader != null)
         {
             Debug.Log(string.Format("ResourceResLoader refCount:{0} msg:{1}", mResourceResLoader.RefCount, mResourceResLoader.Message));
+        }
+
+        if(mAssetFileLoader != null)
+        {
+            Debug.Log(string.Format("ResourceResLoader refCount:{0} msg:{1}", mAssetFileLoader.RefCount, mAssetFileLoader.Message));
         }
     }
 
@@ -106,5 +114,33 @@ public class NewLoaderTest : MonoBehaviour {
         //Debug.Log(string.Format("Use time :{0}", mResourceResLoader.UseTime));
         //进行一次释放
         //PLDResourceLoaderCache.ReleaseLoader(mResourceResLoader);
+    }
+
+    private void AssetFileLoaderFinish(bool isOk, object retObj)
+    {
+        if (isOk)
+        {
+            GameObject gameObj = retObj as GameObject;
+            if (gameObj)
+            {
+                Debug.Assert(gameObj != null, "AssetFileLoader failed");
+                GameObject gameobj = Instantiate(gameObj);
+                Debug.Log("gameobj name:" + gameobj.name);
+            }
+        }
+        else
+        {
+            Debug.Assert(false, "AssetFileLoader load failed");
+        }
+
+
+        //Debug.Log(string.Format("Use time :{0}", mResourceResLoader.UseTime));
+        //进行一次释放
+        //PLDResourceLoaderCache.ReleaseLoader(mResourceResLoader);
+    }
+
+    private void AssetFileLoaderOnStart()
+    {
+        Debug.Log("AssetFileLoaderOnStart --------->");
     }
 }

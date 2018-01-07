@@ -45,70 +45,70 @@ namespace Pld
         /// <summary>
         /// 最终加载的结果
         /// </summary>
-        public object ResultObj { get; private set; }
+        public virtual object ResultObj { get; private set; }
 
         /// <summary>
         /// 是否有错误
         /// </summary>
-        public bool IsError { get; private set; }
+        public virtual bool IsError { get; private set; }
 
         /// <summary>
         /// 是否成功
         /// </summary>
-        public bool IsSuccess { get; private set; }
+        public virtual bool IsSuccess { get; private set; }
 
         /// <summary>
         /// 是否完成
         /// </summary>
-        public bool IsFinish { get; private set; }
+        public virtual bool IsFinish { get; private set; }
 
         /// <summary>
         /// 是否准备Dispose
         /// </summary>
-        public bool IsReadyDispose { get; private set; }
+        public virtual bool IsReadyDispose { get; private set; }
 
         /// <summary>
         /// Url
         /// </summary>
-        public string Url { get; private set; }
+        public virtual string Url { get; private set; }
 
         /// <summary>
         /// 信息
         /// </summary>
-        public string Message { get; private set; }
+        public virtual string Message { get; private set; }
 
         /// <summary>
         /// 进度
         /// </summary>
-        public float Process { get; private set; }
+        public virtual float Process { get; private set; }
 
         /// <summary>
         /// 开始回调
         /// </summary>
-        public StartDelgate StartCallback { private get; set; }
+        public virtual StartDelgate StartCallback { private get; set; }
 
         /// <summary>
         /// 进行回调
         /// </summary>
-        public ProcessDelgate ProcessCallback { private get; set; }
+        public virtual ProcessDelgate ProcessCallback { private get; set; }
 
         /// <summary>
         /// 成功回调
         /// </summary>
-        public SuccessDelgate SuccessCallback { private get; set; }
+        public virtual SuccessDelgate SuccessCallback { private get; set; }
 
         /// <summary>
         /// 失败回调
         /// </summary>
-        public ErrorDelgate ErrorCallbcak { private get; set; }
+        public virtual ErrorDelgate ErrorCallbcak { private get; set; }
 
         /// <summary>
         /// 完成回调
         /// </summary>
-        public FinishDelgate FinishCallback { private get; set; }
+        public virtual FinishDelgate FinishCallback { private get; set; }
 
-        private float mInitTime = -1;
-        private float mFinishTime = -1;
+        protected float mInitTime = -1;
+        protected float mFinishTime = -1;
 
         /// <summary>
         /// 用时

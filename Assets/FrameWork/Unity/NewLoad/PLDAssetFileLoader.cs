@@ -6,24 +6,28 @@ namespace Pld
 {
     class PLDAssetFileLoader : PLDLoaderAbstract
     {
+        // AssetBundle方式Loader
         protected PLDAssetBundleLoader mAssetBundleLoader;
+        // Resource方式Loader
         protected PLDResourceResLoader mResourceResLoader;
 
         protected LoadOption mLoadOption;
 
-        protected bool mIsEditorLoad
+        // 根据配置绝对用哪种方式读取
+        protected bool mIsResourceLoad
         {
             get
             {
-                return Application.isEditor;
+                return true;
             }
         }
 
+        #region 继承的成员变量,根据读取方式返回对应Loader的值
         public override object ResultObj
         {
             get
             {
-                if(mIsEditorLoad)
+                if(mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.ResultObj;
@@ -42,7 +46,7 @@ namespace Pld
         {
             get
             {
-                if (mIsEditorLoad)
+                if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.IsError;
@@ -61,7 +65,7 @@ namespace Pld
         {
             get
             {
-                if (mIsEditorLoad)
+                if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.IsSuccess;
@@ -80,7 +84,7 @@ namespace Pld
         {
             get
             {
-                if (mIsEditorLoad)
+                if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.IsFinish;
@@ -99,7 +103,7 @@ namespace Pld
         {
             get
             {
-                if (mIsEditorLoad)
+                if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.Message;
@@ -118,7 +122,7 @@ namespace Pld
         {
             get
             {
-                if (mIsEditorLoad)
+                if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
                         return mResourceResLoader.Process;
@@ -169,7 +173,15 @@ namespace Pld
                     mAssetBundleLoader.ErrorCallbcak = value;
             }
         }
+        #endregion
 
+        /// <summary>
+        /// 静态方法，读取资源
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="option">可选项</param>
+        /// <param name="callBack">回调</param>
+        /// <returns></returns>
         public static PLDAssetFileLoader Load(string path, LoadOption option, FinishDelgate callBack)
         {
             PLDAssetFileLoader loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetFileLoader>(path, callBack);
@@ -178,6 +190,14 @@ namespace Pld
             return loader;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="option"></param>
+        /// <param name="callBack"></param>
+        /// <param name="startCallBack"></param>
+        /// <returns></returns>
         public static PLDAssetFileLoader Load(string path, LoadOption option, FinishDelgate callBack, StartDelgate startCallBack)
         {
             PLDAssetFileLoader loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetFileLoader>(path, callBack);
@@ -204,7 +224,7 @@ namespace Pld
         {
             OnStart();
 
-            if (mIsEditorLoad)
+            if (mIsResourceLoad)
             {
                 mResourceResLoader = PLDResourceResLoader.Load(Url, mLoadOption, callBack);
             }
@@ -213,7 +233,6 @@ namespace Pld
                 mAssetBundleLoader = PLDAssetBundleLoader.Load(Url, mLoadOption, callBack);
             }
         }
-
         
     }
 }

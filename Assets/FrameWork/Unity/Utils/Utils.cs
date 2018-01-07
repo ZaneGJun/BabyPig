@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Pld
@@ -32,5 +33,14 @@ namespace Pld
             return resStr;
         }
 
+        /// <summary>
+        /// 去掉扩展名
+        /// </summary>
+        public static string RemoveExt(string path)
+        {
+            string extension = Path.GetExtension(path);
+            path = path.Substring(0, path.Length - extension.Length); // remove extensions
+            return path;
+        }
     }
 }

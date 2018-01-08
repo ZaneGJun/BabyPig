@@ -42,5 +42,17 @@ namespace Pld
             path = path.Substring(0, path.Length - extension.Length); // remove extensions
             return path;
         }
+
+        /// <summary>
+        /// 是否有扩展名
+        /// </summary>
+        public static bool HaveExt(string path)
+        {
+            string extension = Path.GetExtension(path);
+            if (string.IsNullOrEmpty(extension))
+                return false;
+
+            return true;
+        }
     }
 }

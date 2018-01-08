@@ -40,6 +40,9 @@ namespace Pld
         {
             string fullpath = "";
 #if UNITY_EDITOR
+            //检查是否带有扩展名
+            Debug.Assert(Utils.HaveExt(relativePath), string.Format("Editor relativePath:{0} must have extension",relativePath));
+
             fullpath = "Assets/" + PLDGlobalDef.GAME_ASSET_PATH + "/" + relativePath;
             return fullpath;
 #else
@@ -71,6 +74,32 @@ namespace Pld
             {
                 return PLDGlobalDef.STREAMING_PATH + "/" + PLDGlobalDef.GAME_ASSET_PATH;
             }
+        }
+
+        public static string FileProtocol
+        {
+            get
+            {
+                return GetFileProtocol();
+            }
+        }
+
+        /// <summary>
+        /// On Windows, file protocol has a strange rule that has one more slash
+        /// </summary>
+        /// <returns>string, file protocol string</returns>
+        public static string GetFileProtocol()
+        {
+            string fileProtocol = "file://";
+            if (Application.platform == RuntimePlatform.WindowsEditor ||
+                Application.platform == RuntimePlatform.WindowsPlayer
+#if !UNITY_5_4_OR_NEWER
+                || Application.platform == RuntimePlatform.WindowsWebPlayer
+#endif
+)
+                fileProtocol = "file:///";
+
+            return fileProtocol;
         }
 
     }

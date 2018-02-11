@@ -1,0 +1,44 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Pld;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+public class Player : MonoBehaviour {
+
+    private GameObject mModel = null;
+
+	// Use this for initialization
+	void Start () {
+        loadGameModle();
+
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+    private void loadGameModle()
+    {
+        string fullpath = PLDResourceLoaderSystem.Instance.GetFullPath("Prefab/tiger.prefab");
+        Debug.Log("fullpath:" + fullpath);
+        // PLDAssetFileLoader.Load(fullpath, LoadOption.Sync, onLoadFinish);
+        PLDEditorLoader.Load(fullpath, onLoadFinish);
+    }
+
+    private void onLoadFinish(bool isOk, object result)
+    {
+        if (isOk)
+        {
+            GameObject obj = result as GameObject;
+            mModel = Instantiate(obj, this.transform);
+        }else
+        {
+            Debug.LogError("loadGameModle failed");
+        }
+    }
+}

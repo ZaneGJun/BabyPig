@@ -10,57 +10,54 @@ namespace Pld
     /// </summary>
     class PLDAssetBundleLoader : PLDLoaderAbstract
     {
-        protected LoadOption mLoadOption;
+        /// <summary>
+        /// 静态创建方法
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static PLDAssetBundleLoader Create(string url)
+        {
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetBundleLoader>(url);
+            return loader;
+        }
 
         /// <summary>
-        /// 静态函数，加载AssetBundle资源
+        /// 同步加载
         /// </summary>
-        /// <param name="url">路径</param>
-        /// <param name="option">选项</param>
-        /// <param name="callback">完成回调</param>
         /// <returns></returns>
-        public static PLDAssetBundleLoader Load(string url, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
+        public AssetBundle Load()
         {
-            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetBundleLoader>(url, callback);
+            OnStart();
 
-            loader.mLoadOption = option;
-            loader.StartLoad();
+            //同步加载
+            AssetBundle result = AssetBundle.LoadFromFile(Url);
+            OnFinish(result);
 
-            return loader as PLDAssetBundleLoader;
+            return result;
+        }
+
+        /// <summary>
+        /// 异步加载
+        /// </summary>
+        /// <param name="callback">完成回调</param>
+        public void LoadAsync(FinishDelgate callback = null)
+        {
+            if (callback != null)
+                FinishCallback = callback;
+
+            OnStart();
+
+            //异步加载
+            PLDResourceLoaderSystem.Instance.StartCoroutine(DoLoadAsync());
         }
 
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="url">路径</param>
-        /// <param name="finishcallback">完成回调</param>
-        public override void Init(string url, FinishDelgate finishcallback = null)
+        public override void Init(string url)
         {
-            base.Init(url, finishcallback);
-        }
-
-        /// <summary>
-        /// 开始加载
-        /// </summary>
-        protected virtual void StartLoad()
-        {
-            OnStart();
-
-            if(mLoadOption == LoadOption.Sync)
-            {
-                //同步加载
-                AssetBundle result = AssetBundle.LoadFromFile(Url);
-                OnFinish(result);
-            }
-            else if(mLoadOption == LoadOption.Async)
-            {
-                //异步加载
-                PLDResourceLoaderSystem.Instance.StartCoroutine(DoLoadAsync());
-            }
-            else
-            {
-                OnFinish(null, string.Format("[PLDNewAssetBundleLoader] LoadOption error:{0}", mLoadOption));
-            }
+            base.Init(url);
         }
 
         /// <summary>

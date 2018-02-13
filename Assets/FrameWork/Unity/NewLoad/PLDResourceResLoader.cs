@@ -10,58 +10,48 @@ namespace Pld
     /// </summary>
     class PLDResourceResLoader : PLDLoaderAbstract
     {
-        protected LoadOption mLoadOption;
+
+        // 静态方法
+        public static PLDResourceResLoader Create(string path)
+        {
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(path);
+            return loader;
+        }
+
+        //同步加载
+        public object Load()
+        {
+            OnStart();
+
+            //同步加载
+            UnityEngine.Object obj = Resources.Load(Url);
+            OnFinish(obj);
+
+            return obj;
+        }
 
         /// <summary>
-        /// 静态函数，加载资源
+        /// 异步加载
         /// </summary>
-        /// <param name="path">路径</param>
-        /// <param name="option">可选项</param>
         /// <param name="callback">完成回调</param>
-        /// <returns></returns>
-        public static PLDResourceResLoader Load(string path, LoadOption option = LoadOption.Async, FinishDelgate callback = null)
+        public void LoadAsync(FinishDelgate callback)
         {
-            PLDResourceResLoader loader;
-            loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(path, callback);
+            if (callback != null)
+                this.FinishCallback = callback;
 
-            loader.mLoadOption = option;
-            loader.StartLoad();
+            OnStart();
 
-            return loader;
+            //异步加载
+            PLDResourceLoaderSystem.Instance.StartCoroutine(DoLoadAsync());
         }
 
         /// <summary>
         /// 继承的初始化函数
         /// </summary>
         /// <param name="path">路径</param>
-        /// <param name="finishcallback">完成回调</param>
-        public override void Init(string path, FinishDelgate finishcallback = null)
+        public override void Init(string path)
         {
-            base.Init(path, finishcallback);
-        }
-
-        /// <summary>
-        /// 开始加载，根据可选项进行不同处理
-        /// </summary>
-        protected void StartLoad()
-        {
-            OnStart();
-
-            if(mLoadOption == LoadOption.Sync)
-            {
-                //同步加载
-                UnityEngine.Object obj = Resources.Load(Url);
-                OnFinish(obj);
-            }
-            else if(mLoadOption == LoadOption.Async)
-            {
-                //异步加载
-                PLDResourceLoaderSystem.Instance.StartCoroutine(DoLoadAsync());
-            }
-            else
-            {
-                OnFinish(null, string.Format("[PLDResourceResLoader] LoadOption error:{0}",mLoadOption));
-            }
+            base.Init(path);
         }
 
         /// <summary>

@@ -6,30 +6,49 @@ using UnityEditor;
 #endif
 
 namespace Pld
-{
+{ 
     class PLDEditorLoader : PLDLoaderAbstract
     {
-        public static PLDEditorLoader Load(string url, FinishDelgate callback)
+        /// <summary>
+        /// 静态创建方法
+        /// </summary>
+        /// <param name="url">路径</param>
+        /// <param name="callback">回调</param>
+        /// <returns></returns>
+        public static PLDEditorLoader Create(string url)
         {
-            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDEditorLoader>(url, callback);
-            loader.startLoad();
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDEditorLoader>(url);
             return loader as PLDEditorLoader;
         }
 
-        public override void Init(string url, FinishDelgate finishcallback = null)
+        /// <summary>
+        /// 加载
+        /// </summary>
+        /// <returns></returns>
+        public object Load()
         {
-            base.Init(url, finishcallback);
-
+            object res = startLoad();
+            return res;
         }
 
-        protected void startLoad()
+        // 初始化
+        public override void Init(string url)
+        {
+            base.Init(url);
+        }
+
+        // 内部加载方法
+        protected object startLoad()
         {
             OnStart();
 
 #if UNITY_EDITOR
             GameObject res = AssetDatabase.LoadAssetAtPath<GameObject>(Url);
             OnFinish(res);
+            return res;
 #endif
+
+            return null;
         }
     }
 }

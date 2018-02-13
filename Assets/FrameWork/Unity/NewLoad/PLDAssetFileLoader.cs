@@ -11,8 +11,6 @@ namespace Pld
         // Resource方式Loader
         protected PLDResourceResLoader mResourceResLoader;
 
-        protected LoadOption mLoadOption;
-
         // 根据配置绝对用哪种方式读取
         protected bool mIsResourceLoad
         {
@@ -176,63 +174,67 @@ namespace Pld
         #endregion
 
         /// <summary>
-        /// 静态方法，读取资源
+        /// 静态创建方法
         /// </summary>
-        /// <param name="path">路径</param>
-        /// <param name="option">可选项</param>
-        /// <param name="callBack">回调</param>
+        /// <param name="path"></param>
         /// <returns></returns>
-        public static PLDAssetFileLoader Load(string path, LoadOption option, FinishDelgate callBack)
+        public static PLDAssetFileLoader Create(string path)
         {
-            PLDAssetFileLoader loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetFileLoader>(path, callBack);
-            loader.mLoadOption = option;
-            loader.StartLoad(callBack);
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetFileLoader>(path);
+
+            loader.mAssetBundleLoader = PLDAssetBundleLoader.Create(path);
+            loader.mResourceResLoader = PLDResourceResLoader.Create(path);
+
             return loader;
         }
 
         /// <summary>
-        /// 
+        /// 同步加载
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="option"></param>
-        /// <param name="callBack"></param>
-        /// <param name="startCallBack"></param>
         /// <returns></returns>
-        public static PLDAssetFileLoader Load(string path, LoadOption option, FinishDelgate callBack, StartDelgate startCallBack)
-        {
-            PLDAssetFileLoader loader = PLDResourceLoaderCache.GetResourceLoader<PLDAssetFileLoader>(path, callBack);
-            loader.mLoadOption = option;
-            loader.StartCallback = startCallBack;
-            loader.StartLoad(callBack);
-            return loader;
+        public object Load()
+        { 
+            OnStart();
+            
+            if(mIsResourceLoad)
+            {
+                return mResourceResLoader.Load();
+            }
+            else
+            {
+                return mAssetBundleLoader.Load();
+            }
         }
 
-        public override void Init(string path, FinishDelgate finishcallback = null)
+        /// <summary>
+        /// 异步加载
+        /// </summary>
+        /// <param name="callback"></param>
+        public void LoadAsync(FinishDelgate callback)
         {
-            base.Init(path, finishcallback);
+            if (mIsResourceLoad)
+            {
+                mResourceResLoader.LoadAsync(callback);
+            }
+            else
+            {
+                mAssetBundleLoader.LoadAsync(callback);
+            }
         }
 
+        // 初始化 
+        public override void Init(string path)
+        {
+            base.Init(path);
+        }
+
+        // 重写父类的方法
         protected override void DoDispose()
         {
             base.DoDispose();
 
             PLDResourceLoaderCache.ReleaseLoader(mAssetBundleLoader);
             PLDResourceLoaderCache.ReleaseLoader(mResourceResLoader);
-        }
-
-        protected void StartLoad(FinishDelgate callBack)
-        {
-            OnStart();
-
-            if (mIsResourceLoad)
-            {
-                mResourceResLoader = PLDResourceResLoader.Load(Url, mLoadOption, callBack);
-            }
-            else
-            {
-                mAssetBundleLoader = PLDAssetBundleLoader.Load(Url, mLoadOption, callBack);
-            }
-        }
-        
+        }      
     }
 }

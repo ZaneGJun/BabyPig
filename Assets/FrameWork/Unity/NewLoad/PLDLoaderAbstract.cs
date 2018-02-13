@@ -130,7 +130,7 @@ namespace Pld
         /// <summary>
         /// 初始化
         /// </summary>
-        public virtual void Init(string url, FinishDelgate finishcallback = null)
+        public virtual void Init(string url)
         {
             mInitTime = Time.realtimeSinceStartup;
             ResultObj = null;
@@ -150,7 +150,6 @@ namespace Pld
             SuccessCallback = null;
             ErrorCallbcak = null;
 
-            FinishCallback = finishcallback;
         }
 
         /// <summary>

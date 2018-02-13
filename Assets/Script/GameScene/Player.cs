@@ -27,18 +27,14 @@ public class Player : MonoBehaviour {
         string fullpath = PLDResourceLoaderSystem.Instance.GetFullPath("Prefab/tiger.prefab");
         Debug.Log("fullpath:" + fullpath);
         // PLDAssetFileLoader.Load(fullpath, LoadOption.Sync, onLoadFinish);
-        PLDEditorLoader.Load(fullpath, onLoadFinish);
-    }
-
-    private void onLoadFinish(bool isOk, object result)
-    {
-        if (isOk)
+        var loader = PLDEditorLoader.Create(fullpath);
+        GameObject res = loader.Load() as GameObject;
+        mModel = Instantiate(res, transform) as GameObject;
+        if(mModel == null)
         {
-            GameObject obj = result as GameObject;
-            mModel = Instantiate(obj, this.transform);
-        }else
-        {
-            Debug.LogError("loadGameModle failed");
+            Debug.Assert(false,"load prefab failed");
         }
     }
+
+    
 }

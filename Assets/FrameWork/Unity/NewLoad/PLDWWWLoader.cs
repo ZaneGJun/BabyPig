@@ -17,45 +17,53 @@ namespace Pld
         private WWW mWWW = null;
 
         /// <summary>
-        /// 静态函数，加载
+        /// 静态创建方法
         /// </summary>
-        /// <param name="url">Url</param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static PLDWWWLoader Create(string url)
+        {
+            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDWWWLoader>(url);
+            return loader;
+        }
+
+        /// <summary>
+        /// 开始加载，调用内部的加载方法
+        /// </summary>
         /// <param name="finishcallback">完成回调</param>
         /// <param name="startcallback">开始回调</param>
         /// <param name="processcallback">进度回调</param>
         /// <param name="successcallback">成功回调</param>
         /// <param name="errorcallback">失败回调</param>
-        /// <returns></returns>
-        public static PLDWWWLoader Load(string url, FinishDelgate finishcallback = null, StartDelgate startcallback = null, ProcessDelgate processcallback = null,
+        public void LoadAsync(FinishDelgate finishcallback = null, StartDelgate startcallback = null, ProcessDelgate processcallback = null,
                                             SuccessDelgate successcallback = null, ErrorDelgate errorcallback = null)
         {
-            var loader = PLDResourceLoaderCache.GetResourceLoader<PLDWWWLoader>(url, finishcallback);
-
             //设置回调
             if (startcallback != null)
-                loader.StartCallback = startcallback;
+                StartCallback = startcallback;
 
             if (processcallback != null)
-                loader.ProcessCallback = processcallback;
+                ProcessCallback = processcallback;
 
             if (successcallback != null)
-                loader.SuccessCallback = successcallback;
+                SuccessCallback = successcallback;
 
             if (errorcallback != null)
-                loader.ErrorCallbcak = errorcallback;
+                ErrorCallbcak = errorcallback;
 
-            loader.StartLoad();
-            return loader;
+            if (finishcallback != null)
+                FinishCallback = finishcallback;
+
+            StartLoad();
         }
 
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="finishcallback">完成回调</param>
-        public override void Init(string url, FinishDelgate finishcallback = null)
+        public override void Init(string url)
         {
-            base.Init(url, finishcallback);
+            base.Init(url);
         }
 
         /// <summary>

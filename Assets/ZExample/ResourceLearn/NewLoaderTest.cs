@@ -18,13 +18,17 @@ public class NewLoaderTest : MonoBehaviour {
     void Start () {
         //string fullpath = "file://" + PLDGlobalDef.STREAMING_PATH + "/" + "Pre3";
 
-        //mWWWLoader = PLDWWWLoader.Load(fullpath, LoaderFinish);
+        //mWWWLoader = PLDWWWLoader.Create(fullpath, LoaderFinish);
+        //mWWWLoader.LoadAsny(LoaderFinish);
 
         //mAssetBundleLoader = PLDNewAssetBundleLoader.Load(PLDGlobalDef.STREAMING_PATH + "/" + "Pre3", LoadOption.Async, AssetBundleLoaderFinish);
 
-        //mResourceResLoader = PLDResourceResLoader.Load("Pre2", LoadOption.Async, ResourceResLoaderFinish);
+        //mResourceResLoader = PLDResourceResLoader.Load("Pre2");
+        //mResourceResLoader.Load();
+        //mResourceResLoader.LoadAsny(ResourceResLoaderFinish);
 
-        mAssetFileLoader = PLDAssetFileLoader.Load("Pre2", LoadOption.Async, AssetFileLoaderFinish);
+        mAssetFileLoader = PLDAssetFileLoader.Create("Pre2");
+        mAssetFileLoader.LoadAsync(AssetFileLoaderFinish);
     }
 	
 	// Update is called once per frame

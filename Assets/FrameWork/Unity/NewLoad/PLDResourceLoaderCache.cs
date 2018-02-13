@@ -85,9 +85,8 @@ namespace Pld
         /// </summary>
         /// <typeparam name="T"> T必须继承PLDResourceLoaderAbstract且具有构造函数的类</typeparam>
         /// <param name="url">url</param>
-        /// <param name="finishcallback">完成回调</param>
         /// <returns>返回一个T的可用实例</returns>
-        public static T GetResourceLoader<T>(string url, PLDLoaderAbstract.FinishDelgate finishcallback = null) where T : PLDLoaderAbstract, new()
+        public static T GetResourceLoader<T>(string url) where T : PLDLoaderAbstract, new()
         {
             Dictionary<string, PLDLoaderAbstract> dict = GetTypeDict(typeof(T));
 
@@ -95,7 +94,7 @@ namespace Pld
             if(!dict.TryGetValue(url, out loader))
             {
                 loader = new T();
-                loader.Init(url, finishcallback);
+                loader.Init(url);
             }
 
             // 增加一次引用

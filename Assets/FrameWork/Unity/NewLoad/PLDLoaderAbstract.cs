@@ -45,67 +45,67 @@ namespace Pld
         /// <summary>
         /// 最终加载的结果
         /// </summary>
-        public virtual object ResultObj { get; private set; }
+        public virtual object ResultObj { get; protected set; }
 
         /// <summary>
         /// 是否有错误
         /// </summary>
-        public virtual bool IsError { get; private set; }
+        public virtual bool IsError { get; protected set; }
 
         /// <summary>
         /// 是否成功
         /// </summary>
-        public virtual bool IsSuccess { get; private set; }
+        public virtual bool IsSuccess { get; protected set; }
 
         /// <summary>
         /// 是否完成
         /// </summary>
-        public virtual bool IsFinish { get; private set; }
+        public virtual bool IsFinish { get; protected set; }
 
         /// <summary>
         /// 是否准备Dispose
         /// </summary>
-        public virtual bool IsReadyDispose { get; private set; }
+        public virtual bool IsReadyDispose { get; protected set; }
 
         /// <summary>
         /// Url
         /// </summary>
-        public virtual string Url { get; private set; }
+        public virtual string Url { get; protected set; }
 
         /// <summary>
         /// 信息
         /// </summary>
-        public virtual string Message { get; private set; }
+        public virtual string Message { get; protected set; }
 
         /// <summary>
         /// 进度
         /// </summary>
-        public virtual float Process { get; private set; }
+        public virtual float Process { get; protected set; }
 
         /// <summary>
         /// 开始回调
         /// </summary>
-        public virtual StartDelgate StartCallback { private get; set; }
+        public virtual StartDelgate StartCallback { protected get; set; }
 
         /// <summary>
         /// 进行回调
         /// </summary>
-        public virtual ProcessDelgate ProcessCallback { private get; set; }
+        public virtual ProcessDelgate ProcessCallback { protected get; set; }
 
         /// <summary>
         /// 成功回调
         /// </summary>
-        public virtual SuccessDelgate SuccessCallback { private get; set; }
+        public virtual SuccessDelgate SuccessCallback { protected get; set; }
 
         /// <summary>
         /// 失败回调
         /// </summary>
-        public virtual ErrorDelgate ErrorCallbcak { private get; set; }
+        public virtual ErrorDelgate ErrorCallbcak { protected get; set; }
 
         /// <summary>
         /// 完成回调
         /// </summary>
-        public virtual FinishDelgate FinishCallback { private get; set; }
+        public virtual FinishDelgate FinishCallback { protected get; set; }
 
         protected float mInitTime = -1;
         protected float mFinishTime = -1;
@@ -188,7 +188,7 @@ namespace Pld
         /// 开始
         /// </summary>
         /// <param name="msg">信息</param>
-        public virtual void OnStart(string msg = null)
+        protected virtual void OnStart(string msg = null)
         {
             Message = string.IsNullOrEmpty(msg) ? "Loader OnStart" : msg;
             Process = 0.0F;
@@ -202,7 +202,7 @@ namespace Pld
         /// </summary>
         /// <param name="process">进度，[0.0F,1.0F]区间</param>
         /// <param name="msg">信息</param>
-        public virtual void OnProcess(float process, string msg = null)
+        protected virtual void OnProcess(float process, string msg = null)
         {
             Message = string.IsNullOrEmpty(msg) ? string.Format("Loader OnProcess:{0}",process) : msg;
             Process = process;
@@ -215,7 +215,7 @@ namespace Pld
         /// 成功
         /// </summary>
         /// <param name="msg">信息</param>
-        public virtual void OnSuccess(string msg = null)
+        protected virtual void OnSuccess(string msg = null)
         {
             Message = string.IsNullOrEmpty(msg) ? "Loader OnSucccess" : msg;
 
@@ -227,7 +227,7 @@ namespace Pld
         /// 出错
         /// </summary>
         /// <param name="msg">信息</param>
-        public virtual void OnError(string msg = null)
+        protected virtual void OnError(string msg = null)
         {
             Message = string.IsNullOrEmpty(msg) ? "Loader OnError" : msg;
 
@@ -240,7 +240,7 @@ namespace Pld
         /// </summary>
         /// <param name="resultObj">加载完成的结果</param>
         /// <param name="msg">信息</param>
-        public virtual void OnFinish(object resultObj, string msg = null)
+        protected virtual void OnFinish(object resultObj, string msg = null)
         {
             ResultObj = resultObj;
             Process = 1.0F;

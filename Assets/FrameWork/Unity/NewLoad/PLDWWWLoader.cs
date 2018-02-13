@@ -135,7 +135,7 @@ namespace Pld
         /// </summary>
         /// <param name="resultObj">最后得到的结果</param>
         /// <param name="msg">信息</param>
-        public override void OnFinish(object resultObj, string msg = null)
+        protected override void OnFinish(object resultObj, string msg = null)
         {
             base.OnFinish(resultObj, msg);
         }

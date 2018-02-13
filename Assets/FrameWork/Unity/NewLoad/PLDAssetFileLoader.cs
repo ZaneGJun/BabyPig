@@ -10,6 +10,10 @@ namespace Pld
         protected PLDAssetBundleLoader mAssetBundleLoader;
         // Resource方式Loader
         protected PLDResourceResLoader mResourceResLoader;
+#if UNITY_EDITOR
+        //编辑器Loader
+        protected PLDEditorLoader mEditorLoader;
+#endif
 
         // 根据配置绝对用哪种方式读取
         protected bool mIsResourceLoad
@@ -25,6 +29,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.ResultObj;
+#endif
+
                 if(mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -44,6 +52,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.IsError;
+#endif
+
                 if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -63,6 +75,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.IsSuccess;
+#endif
+
                 if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -82,6 +98,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.IsFinish;
+#endif
+
                 if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -101,6 +121,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.Message;
+#endif
+
                 if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -120,6 +144,10 @@ namespace Pld
         {
             get
             {
+#if UNITY_EDITOR
+                return mEditorLoader.Process;
+#endif
+
                 if (mIsResourceLoad)
                 {
                     if (mResourceResLoader != null)
@@ -144,7 +172,10 @@ namespace Pld
                     mResourceResLoader.ProcessCallback = value;
                 if (mAssetBundleLoader != null)
                     mAssetBundleLoader.ProcessCallback = value;
-
+#if UNITY_EDITOR
+                if (mEditorLoader != null)
+                    mEditorLoader.ProcessCallback = value;
+#endif
             }
         }
 
@@ -157,6 +188,10 @@ namespace Pld
                     mResourceResLoader.SuccessCallback = value;
                 if (mAssetBundleLoader != null)
                     mAssetBundleLoader.SuccessCallback = value;
+#if UNITY_EDITOR
+                if (mEditorLoader != null)
+                    mEditorLoader.SuccessCallback = value;
+#endif
             }
         }
 
@@ -169,6 +204,10 @@ namespace Pld
                     mResourceResLoader.ErrorCallbcak = value;
                 if (mAssetBundleLoader != null)
                     mAssetBundleLoader.ErrorCallbcak = value;
+#if UNITY_EDITOR
+                if (mEditorLoader != null)
+                    mEditorLoader.ErrorCallbcak = value;
+#endif
             }
         }
         #endregion
@@ -184,6 +223,7 @@ namespace Pld
 
             loader.mAssetBundleLoader = PLDAssetBundleLoader.Create(path);
             loader.mResourceResLoader = PLDResourceResLoader.Create(path);
+            loader.mEditorLoader = PLDEditorLoader.Create(path);
 
             return loader;
         }
@@ -195,7 +235,12 @@ namespace Pld
         public object Load()
         { 
             OnStart();
-            
+
+#if UNITY_EDITOR
+            //编辑器模式下的加载
+            return mEditorLoader.Load();
+#endif
+
             if(mIsResourceLoad)
             {
                 return mResourceResLoader.Load();
@@ -212,6 +257,16 @@ namespace Pld
         /// <param name="callback"></param>
         public void LoadAsync(FinishDelgate callback)
         {
+#if UNITY_EDITOR
+            FinishCallback = callback;
+
+            object result = mEditorLoader.Load();
+            GameObject tmpO = result as GameObject;
+            Debug.Log(tmpO.name);
+            OnFinish(result);
+            return;
+#endif
+
             if (mIsResourceLoad)
             {
                 mResourceResLoader.LoadAsync(callback);
@@ -235,6 +290,9 @@ namespace Pld
 
             PLDResourceLoaderCache.ReleaseLoader(mAssetBundleLoader);
             PLDResourceLoaderCache.ReleaseLoader(mResourceResLoader);
-        }      
+#if UNITY_EDITOR
+            PLDResourceLoaderCache.ReleaseLoader(mEditorLoader);
+#endif
+        } 
     }
 }

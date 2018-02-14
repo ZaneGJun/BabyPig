@@ -142,7 +142,6 @@ namespace Pld
 
             Url = url;
             Message = "";
-
             Process = 0.0F;
 
             StartCallback = null;

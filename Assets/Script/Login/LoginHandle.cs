@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pld;
 
 public class LoginHandle : MonoBehaviour {
 
@@ -19,7 +20,7 @@ public class LoginHandle : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        
+       
 	}
 	
 	// Update is called once per frame
@@ -41,7 +42,6 @@ public class LoginHandle : MonoBehaviour {
         Debug.Log ("onBtnSetting");
         LoginPanel.gameObject.SetActive(false);
         SetPanel.gameObject.SetActive(true);
-        
 	}
 
     public void onBtnReturnStart()

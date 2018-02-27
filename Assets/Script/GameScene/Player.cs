@@ -9,7 +9,10 @@ using UnityEditor;
 
 public class Player : MonoBehaviour {
 
-    private GameObject mModel = null;
+    private GameObject m_Model = null;
+    private Animator m_Animator;
+    
+
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +30,9 @@ public class Player : MonoBehaviour {
         string fullpath = PLDResourceLoaderSystem.Instance.GetFullPath("Prefab/tiger.prefab");
         Debug.Log("fullpath:" + fullpath);
         GameObject res = PLDAssetFileLoader.Create(fullpath).Load() as GameObject;
-        mModel = Instantiate(res, transform) as GameObject;
+        m_Model = Instantiate(res, transform) as GameObject;
+
+        m_Animator = m_Model.GetComponent<Animator>();
     }
 
 }

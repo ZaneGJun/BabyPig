@@ -50,6 +50,21 @@ public class GridManager : MonoBehaviour {
         }
     }
 
+    public void GenGridFromTexture(string texturePath)
+    {
+        Texture2D gridInfoTexture = PLDAssetFileLoader.Create(texturePath).Load() as Texture2D;
+        m_GridRef = new GameObject[gridInfoTexture.width, gridInfoTexture.height];
+
+        for (int i = 0; i < gridInfoTexture.width; i++)
+        {
+            for (int j = 0; i < gridInfoTexture.height; j++)
+            {
+                Color col = gridInfoTexture.GetPixel(i, j);
+                
+            }
+        }
+    }
+
     public GameObject GenOneGrid(int row, int col, GridType gridType = GridType.NONE)
     {
         string gridPrefabFullPath = PLDResourceLoaderSystem.Instance.GetFullPath("Prefab/Grid/NormalGrid.prefab");

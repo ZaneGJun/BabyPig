@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Pld;
 
@@ -11,8 +12,6 @@ public class Player : MonoBehaviour {
 
     private GameObject m_Model = null;
     private Animator m_Animator;
-    
-
 
 	// Use this for initialization
 	void Start () {

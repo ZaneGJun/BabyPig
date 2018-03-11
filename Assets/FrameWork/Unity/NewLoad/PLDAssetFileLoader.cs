@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Pld
 {
@@ -261,7 +262,7 @@ namespace Pld
             FinishCallback = callback;
 
             object result = mEditorLoader.Load();
-            GameObject tmpO = result as GameObject;
+            Object tmpO = result as Object;
             Debug.Log(tmpO.name);
             OnFinish(result);
             return;

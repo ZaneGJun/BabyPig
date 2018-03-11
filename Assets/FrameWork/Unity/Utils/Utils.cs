@@ -54,5 +54,22 @@ namespace Pld
 
             return true;
         }
+
+        /// <summary>
+        /// 将字节码保存到本地
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="path"></param>
+        public static void SaveBytesToLocal(byte[] bytes, string path)
+        {
+            if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+            {
+                File.WriteAllBytes(path, bytes);
+            }else if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                string fullpath = PLDGlobalDef.PERSISTENT_PATH + "/" + path;
+                File.WriteAllBytes(fullpath, bytes);
+            }
+        }
     }
 }

@@ -59,7 +59,7 @@ public class GridManager : MonoBehaviour {
         {
             for (int j = 0; i < gridInfoTexture.height; j++)
             {
-                Color col = gridInfoTexture.GetPixel(i, j);
+                Color color = gridInfoTexture.GetPixel(i, j);
                 
             }
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -43,7 +45,7 @@ namespace Pld
             OnStart();
 
 #if UNITY_EDITOR
-            GameObject res = AssetDatabase.LoadAssetAtPath<GameObject>(Url);
+            Object res = AssetDatabase.LoadAssetAtPath<Object>(Url);
             OnFinish(res);
             return res;
 #endif

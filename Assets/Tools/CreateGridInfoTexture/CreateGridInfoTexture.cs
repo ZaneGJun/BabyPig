@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Pld;
+using System;
 
 using UnityEditor;
 
@@ -26,6 +27,18 @@ public class CreateGridInfoTexture : MonoBehaviour {
     public GameObject m_CreateNewTextureWindow;
     public GameObject m_VirtualTextureInfpPanel;
 
+    public GameObject m_RowInput;
+    public GameObject m_ColInput;
+    public GameObject m_TypeInput;
+    public GameObject m_HeightInput;
+
+    private int m_InputRow;
+    private int m_InputCol;
+    private int m_InputType;
+    private int m_InputHeight;
+    //8位的单像素格式，高4位为类型，低4位为高度
+    private byte m_RawTexturePixel;
+
 	// Use this for initialization
 	void Start () {
         m_LogicGridItemAttachNode = GameObject.Find("MainUI").transform.Find("VirtualTextureInfoPanel/ItemAttachNode").gameObject;
@@ -37,7 +50,32 @@ public class CreateGridInfoTexture : MonoBehaviour {
 		
 	}
 
-    //生成只有单8位通道，高4位表示类型，低4位表示高度
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    private static Color ByteToColor(byte value)
+    {
+        byte[] bytes = new byte[1]{value};
+        float redValue = BitConverter.ToSingle(bytes, 0);
+        return new Color(redValue, 0, 0);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    private static byte ColorToByte(Color color)
+    {
+        byte[] bytes = BitConverter.GetBytes(color.r);
+        return bytes[0];
+    }
+
+    /// <summary>
+    ///  生成只有单8位通道，高4位表示类型，低4位表示高度
+    /// </summary>
     public void CreateNewTexture(int width, int height, Color col)
     {
         //Debug.Assert(width == height, "width not equal to height");
@@ -61,6 +99,13 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_LogicGridItemAttachNode.transform.localScale = new Vector3(itemScaleValue, itemScaleValue, itemScaleValue);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="row"></param>
+    /// <param name="col"></param>
+    /// <param name="color"></param>
+    /// <returns></returns>
     private LogicGridItem GenNewLogicGridItem(int row, int col, Color color)
     {
         GameObject res = (PLDEditorLoader.Create("Assets/Tools/CreateGridInfoTexture/LogicGridItem.prefab").Load()) as GameObject;
@@ -90,6 +135,9 @@ public class CreateGridInfoTexture : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void OnCreateNewTextureBtn()
     {
         m_MainPanel.SetActive(false);
@@ -97,15 +145,35 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_VirtualTextureInfpPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void OnSureCreateBtn()
     {
         m_MainPanel.SetActive(false);
         m_CreateNewTextureWindow.SetActive(false);
         m_VirtualTextureInfpPanel.SetActive(true);
 
-        CreateNewTexture(4, 4, new Color(150,0,0));
+        m_InputRow = StringUtil.StringToInt(m_RowInput.GetComponent<InputField>().text);
+        m_InputCol = StringUtil.StringToInt(m_ColInput.GetComponent<InputField>().text);
+        m_InputType = StringUtil.StringToInt(m_TypeInput.GetComponent<InputField>().text);
+        m_InputHeight = StringUtil.StringToInt(m_HeightInput.GetComponent<InputField>().text);
+
+        m_InputType = Math.Min(15,m_InputType);
+        m_InputHeight = Math.Min(15, m_InputHeight);
+
+        byte tmpType = BitConverter.GetBytes(m_InputType)[0];
+        byte tmpHeight = BitConverter.GetBytes(m_InputHeight)[0];
+
+        byte tmpByteColor = (byte)((tmpType << 4) + tmpHeight);
+        Color color = ByteToColor(tmpByteColor);
+
+        CreateNewTexture(m_InputRow, m_InputCol, color);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void OnBtnComeToMainPanle()
     {
         m_MainPanel.SetActive(true);

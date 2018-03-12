@@ -2035,6 +2035,10 @@ MonoBehaviour:
   m_MainPanel: {fileID: 1705508223}
   m_CreateNewTextureWindow: {fileID: 486609378}
   m_VirtualTextureInfpPanel: {fileID: 1229725034}
+  m_RowInput: {fileID: 776473652}
+  m_ColInput: {fileID: 1234576071}
+  m_TypeInput: {fileID: 1565525767}
+  m_HeightInput: {fileID: 326082013}
 --- !u!4 &1292495970
 Transform:
   m_ObjectHideFlags: 0

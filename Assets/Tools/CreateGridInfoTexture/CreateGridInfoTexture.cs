@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Pld;
 using System;
+using UnityEngine.EventSystems;
 
 using UnityEditor;
 
@@ -36,8 +37,6 @@ public class CreateGridInfoTexture : MonoBehaviour {
     private int m_InputCol;
     private int m_InputType;
     private int m_InputHeight;
-    //8位的单像素格式，高4位为类型，低4位为高度
-    private byte m_RawTexturePixel;
 
 	// Use this for initialization
 	void Start () {
@@ -47,26 +46,26 @@ public class CreateGridInfoTexture : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        MousePick();
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    private static Color ByteToColor(byte value)
-    {
-        byte[] bytes = new byte[1]{value};
-        float redValue = BitConverter.ToSingle(bytes, 0);
-        return new Color(redValue, 0, 0);
     }
 
     /// <summary>
-    /// 
+    /// byte转为Color
     /// </summary>
-    /// <param name="color"></param>
-    /// <returns></returns>
+    /// <param name="value">要转换的byte值</param>
+    /// <returns>转换后返回的Color</returns>
+    private static Color ByteToColor(byte value)
+    {
+        float redValue = (float)value;
+        return new Color(redValue/255.0f, 0, 0);
+    }
+
+    /// <summary>
+    /// color转为byte
+    /// </summary>
+    /// <param name="color">要转换的color</param>
+    /// <returns>返回的byte</returns>
     private static byte ColorToByte(Color color)
     {
         byte[] bytes = BitConverter.GetBytes(color.r);
@@ -74,9 +73,12 @@ public class CreateGridInfoTexture : MonoBehaviour {
     }
 
     /// <summary>
-    ///  生成只有单8位通道，高4位表示类型，低4位表示高度
+    /// 生成只有单8位通道的图片
     /// </summary>
-    public void CreateNewTexture(int width, int height, Color col)
+    /// <param name="width">宽</param>
+    /// <param name="height">高</param>
+    /// <param name="rawSingleGridItemData">一个byte保存信息，高4位表示类型，低4位表示高度</param>
+    public void CreateNewTexture(int width, int height, byte rawSingleGridItemData)
     {
         //Debug.Assert(width == height, "width not equal to height");
 
@@ -84,29 +86,39 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_SaveTexture = new Texture2D(width, height, TextureFormat.R8, false);
         m_LogicGridItems = new GameObject[height, width];
 
+        //二进制数据数组
+        byte[] rawData = new byte[width*height];
+
+        int index = 0;
         for(int i=0;i< height; i++)
         {
             for(int j=0;j<width;j++)
             {
-                //m_SaveTexture.SetPixel(i, j, col);
-                m_LogicGridItems[i, j] = GenNewLogicGridItem(i,j,col);
+                rawData[index] = rawSingleGridItemData;
+                //生成逻辑网格格子
+                m_LogicGridItems[i, j] = GenNewLogicGridItem(i,j, rawSingleGridItemData);
             }
         }
 
+        //将数据load到texture，并保存
+        m_SaveTexture.LoadRawTextureData(rawData);
+        SaveTexture(m_SaveTexture, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
+
         //set scale, height fix 
+        //根据宽高进行缩放从而获得更好的显示效果
         int maxSizeLength = (SCREEN_HEIGHT - 100) / height;
         float itemScaleValue = maxSizeLength / DEFAULT_ITEM_LENGTH;
         m_LogicGridItemAttachNode.transform.localScale = new Vector3(itemScaleValue, itemScaleValue, itemScaleValue);
     }
 
     /// <summary>
-    /// 
+    /// 创建逻辑网格格子，根据行列数设定位置,将一个byte的信息用color的R通道表示
     /// </summary>
-    /// <param name="row"></param>
-    /// <param name="col"></param>
-    /// <param name="color"></param>
+    /// <param name="row">所在行数</param>
+    /// <param name="col">所在列数</param>
+    /// <param name="rawSingleGridItemData">一个byte保存信息，高4位表示类型，低4位表示高度</param>
     /// <returns></returns>
-    private LogicGridItem GenNewLogicGridItem(int row, int col, Color color)
+    private LogicGridItem GenNewLogicGridItem(int row, int col, byte rawSingleGridItemData)
     {
         GameObject res = (PLDEditorLoader.Create("Assets/Tools/CreateGridInfoTexture/LogicGridItem.prefab").Load()) as GameObject;
         GameObject item = Instantiate<GameObject>(res, m_LogicGridItemAttachNode.transform);
@@ -118,25 +130,30 @@ public class CreateGridInfoTexture : MonoBehaviour {
         item.GetComponent<RectTransform>().localPosition = newPos;
 
         //set color
-        item.GetComponent<Image>().color = color;
+        item.GetComponent<Image>().color = ByteToColor(rawSingleGridItemData);
 
         return item;
     }
 
-    //保存图片
+    //保存图片，获取Texture的二进制数据进行保存
     public void SaveTexture(Texture2D texture, string path)
     {
         texture.Apply();
 
-        byte[] bytes = texture.EncodeToPNG();
-        //or byte[] bytes = texture.GetRawTextureData();
+        //byte[] bytes = texture.EncodeToPNG();
+        byte[] bytes = texture.GetRawTextureData();
 
         Utils.SaveBytesToLocal(bytes, path);
+    }
 
+    //读取二进制文件
+    public void LoadTexture()
+    {
+        
     }
 
     /// <summary>
-    /// 
+    /// 开始创建图片回调
     /// </summary>
     public void OnCreateNewTextureBtn()
     {
@@ -146,7 +163,7 @@ public class CreateGridInfoTexture : MonoBehaviour {
     }
 
     /// <summary>
-    /// 
+    /// 确认创建图片回调
     /// </summary>
     public void OnSureCreateBtn()
     {
@@ -164,20 +181,30 @@ public class CreateGridInfoTexture : MonoBehaviour {
 
         byte tmpType = BitConverter.GetBytes(m_InputType)[0];
         byte tmpHeight = BitConverter.GetBytes(m_InputHeight)[0];
-
         byte tmpByteColor = (byte)((tmpType << 4) + tmpHeight);
-        Color color = ByteToColor(tmpByteColor);
 
-        CreateNewTexture(m_InputRow, m_InputCol, color);
+        //创建图片
+        CreateNewTexture(m_InputRow, m_InputCol, tmpByteColor);
     }
 
     /// <summary>
-    /// 
+    /// 返回主界面回调
     /// </summary>
     public void OnBtnComeToMainPanle()
     {
         m_MainPanel.SetActive(true);
         m_CreateNewTextureWindow.SetActive(false);
         m_VirtualTextureInfpPanel.SetActive(false);
+    }
+
+    private void MousePick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                Debug.Log(EventSystem.current.currentSelectedGameObject.name);
+            }
+        }
     }
 }

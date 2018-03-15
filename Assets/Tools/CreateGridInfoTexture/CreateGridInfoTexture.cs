@@ -81,6 +81,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
     public void CreateNewTexture(int width, int height, byte rawSingleGridItemData)
     {
         //Debug.Assert(width == height, "width not equal to height");
+        if (width == 0 || height == 0)
+            return;
 
         m_TextureSize = new Rect(0, 0, width, height);
         m_SaveTexture = new Texture2D(width, height, TextureFormat.R8, false);
@@ -203,8 +205,14 @@ public class CreateGridInfoTexture : MonoBehaviour {
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
-                Debug.Log(EventSystem.current.currentSelectedGameObject.name);
+                GameObject touchObject = UtilUI.GetTopTouchGameObject();
+                if (touchObject)
+                {
+                    Debug.Log(touchObject.name);
+                }        
             }
         }
     }
+
+    
 }

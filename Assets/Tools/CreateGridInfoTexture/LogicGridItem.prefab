@@ -21,13 +21,29 @@ GameObject:
   - component: {fileID: 224169880593434944}
   - component: {fileID: 222665014441854108}
   - component: {fileID: 114492609939731094}
+  - component: {fileID: 111698846278123334}
   m_Layer: 5
   m_Name: LogicGridItem
-  m_TagString: Untagged
+  m_TagString: LogicGridItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!111 &111698846278123334
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1447527133252224}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 83cf6cab21c710142996ad7e3ac1902b, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 83cf6cab21c710142996ad7e3ac1902b, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114492609939731094
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -32,6 +32,7 @@
 		Lighting Off
 		ZTest[unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
+		//Blend SrcAlpha One
 		ColorMask[_ColorMask]
 
 		Stencil

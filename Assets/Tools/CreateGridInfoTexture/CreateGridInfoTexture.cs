@@ -22,8 +22,6 @@ public class CreateGridInfoTexture : MonoBehaviour {
     private LogicGridItem[,] m_LogicGridItems;
     private GameObject m_LogicGridItemAttachNode;
 
-    private float m_LogicGridItemSize;
-
     public GameObject m_MainPanel;
     public GameObject m_CreateNewTextureWindow;
     public GameObject m_VirtualTextureInfpPanel;
@@ -37,6 +35,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
     private int m_InputCol;
     private int m_InputType;
     private int m_InputHeight;
+
+    private Transform m_CurSelectedGridItem;
 
 	// Use this for initialization
 	void Start () {
@@ -88,6 +88,13 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_SaveTexture = new Texture2D(width, height, TextureFormat.R8, false);
         m_LogicGridItems = new GameObject[height, width];
 
+        //Grid Layout
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = width;
+        int maxSizeLength = (SCREEN_HEIGHT - 100) / height;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().cellSize = new Vector2(maxSizeLength, maxSizeLength);
+
+
         //二进制数据数组
         byte[] rawData = new byte[width*height];
 
@@ -105,12 +112,6 @@ public class CreateGridInfoTexture : MonoBehaviour {
         //将数据load到texture，并保存
         m_SaveTexture.LoadRawTextureData(rawData);
         SaveTexture(m_SaveTexture, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
-
-        //set scale, height fix 
-        //根据宽高进行缩放从而获得更好的显示效果
-        int maxSizeLength = (SCREEN_HEIGHT - 100) / height;
-        float itemScaleValue = maxSizeLength / DEFAULT_ITEM_LENGTH;
-        m_LogicGridItemAttachNode.transform.localScale = new Vector3(itemScaleValue, itemScaleValue, itemScaleValue);
     }
 
     /// <summary>
@@ -124,12 +125,6 @@ public class CreateGridInfoTexture : MonoBehaviour {
     {
         GameObject res = (PLDEditorLoader.Create("Assets/Tools/CreateGridInfoTexture/LogicGridItem.prefab").Load()) as GameObject;
         GameObject item = Instantiate<GameObject>(res, m_LogicGridItemAttachNode.transform);
-
-        //set pos
-        float halfCol = m_TextureSize.width / 2.0f - 0.5f;
-        float halfRow = m_TextureSize.height / 2.0f - 0.5f;
-        Vector3 newPos = new Vector3((col-halfCol) * DEFAULT_ITEM_LENGTH, (row-halfRow)*DEFAULT_ITEM_LENGTH,0);
-        item.GetComponent<RectTransform>().localPosition = newPos;
 
         //set color
         item.GetComponent<Image>().color = ByteToColor(rawSingleGridItemData);
@@ -206,10 +201,35 @@ public class CreateGridInfoTexture : MonoBehaviour {
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 GameObject touchObject = UtilUI.GetTopTouchGameObject();
-                if (touchObject)
+                if (touchObject && touchObject.tag=="LogicGridItem")
                 {
-                    Debug.Log(touchObject.name);
-                }        
+                    if(m_CurSelectedGridItem == null)
+                    {
+                        m_CurSelectedGridItem = touchObject.transform;
+                        m_CurSelectedGridItem.GetComponent<Animation>().Play();
+                        m_CurSelectedGridItem.GetComponent<Animation>().wrapMode = WrapMode.Loop;
+                    }
+
+                    if(m_CurSelectedGridItem != touchObject.transform)
+                    {
+                        //当前选中的跟上一次的不同
+                        Animation ani = m_CurSelectedGridItem.GetComponent<Animation>();
+                        AnimationState state = ani["GridItemHighLight"];
+                        if (state)
+                        {
+                            //上一次的item采样到开始状态，然后停止
+                            state.time = 0;
+                            m_CurSelectedGridItem.GetComponent<Animation>().Sample();
+                            m_CurSelectedGridItem.GetComponent<Animation>().Stop();
+                        }
+
+                        //当前选中的开始播放动画
+                        m_CurSelectedGridItem = touchObject.transform;
+                        m_CurSelectedGridItem.GetComponent<Animation>().Play();
+                        m_CurSelectedGridItem.GetComponent<Animation>().wrapMode = WrapMode.Loop;
+                    }
+                }
+        
             }
         }
     }

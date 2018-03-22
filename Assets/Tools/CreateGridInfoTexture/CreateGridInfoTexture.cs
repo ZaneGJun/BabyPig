@@ -25,16 +25,15 @@ public class CreateGridInfoTexture : MonoBehaviour {
     public GameObject m_MainPanel;
     public GameObject m_CreateNewTextureWindow;
     public GameObject m_VirtualTextureInfpPanel;
+    public Transform m_EditorWindow;
 
     public GameObject m_RowInput;
     public GameObject m_ColInput;
     public GameObject m_TypeInput;
     public GameObject m_HeightInput;
 
-    private int m_InputRow;
-    private int m_InputCol;
-    private int m_InputType;
-    private int m_InputHeight;
+    public GameObject m_EditorTypeInput;
+    public GameObject m_EditorHeightInput;
 
     private Transform m_CurSelectedGridItem;
 
@@ -106,6 +105,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
                 rawData[index] = rawSingleGridItemData;
                 //生成逻辑网格格子
                 m_LogicGridItems[i, j] = GenNewLogicGridItem(i,j, rawSingleGridItemData);
+
+                ++index;
             }
         }
 
@@ -128,6 +129,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
 
         //set color
         item.GetComponent<Image>().color = ByteToColor(rawSingleGridItemData);
+        item.GetComponent<ToolGridItem>().Col = col;
+        item.GetComponent<ToolGridItem>().Row = row;
 
         return item;
     }
@@ -150,6 +153,41 @@ public class CreateGridInfoTexture : MonoBehaviour {
     }
 
     /// <summary>
+    /// 保存最终修改的图片
+    /// </summary>
+    public void OnBtnSaveResultTexture()
+    {
+        int height = (int)m_TextureSize.height;
+        int width = (int)m_TextureSize.width;
+        //二进制数据数组
+        byte[] rawData = new byte[width * height];
+
+        Texture2D compareNormalTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+
+        int index = 0;
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                //生成逻辑网格格子
+                rawData[index] = ColorToByte(m_LogicGridItems[i, j].GetComponent<Image>().color);
+
+                compareNormalTexture.SetPixel(j, height - i, m_LogicGridItems[i, j].GetComponent<Image>().color);
+
+                ++index;
+            }
+        }
+
+        //将数据load到texture，并保存
+        m_SaveTexture.LoadRawTextureData(rawData);
+        SaveTexture(m_SaveTexture, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
+
+        byte[] bytes = compareNormalTexture.EncodeToPNG();
+        Utils.SaveBytesToLocal(bytes, "Assets/Tools/CreateGridInfoTexture/bin/compare.png");
+
+    }
+
+    /// <summary>
     /// 开始创建图片回调
     /// </summary>
     public void OnCreateNewTextureBtn()
@@ -168,20 +206,20 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_CreateNewTextureWindow.SetActive(false);
         m_VirtualTextureInfpPanel.SetActive(true);
 
-        m_InputRow = StringUtil.StringToInt(m_RowInput.GetComponent<InputField>().text);
-        m_InputCol = StringUtil.StringToInt(m_ColInput.GetComponent<InputField>().text);
-        m_InputType = StringUtil.StringToInt(m_TypeInput.GetComponent<InputField>().text);
-        m_InputHeight = StringUtil.StringToInt(m_HeightInput.GetComponent<InputField>().text);
+        int inputRow = StringUtil.StringToInt(m_RowInput.GetComponent<InputField>().text);
+        int inputCol = StringUtil.StringToInt(m_ColInput.GetComponent<InputField>().text);
+        int inputType = StringUtil.StringToInt(m_TypeInput.GetComponent<InputField>().text);
+        int inputHeight = StringUtil.StringToInt(m_HeightInput.GetComponent<InputField>().text);
 
-        m_InputType = Math.Min(15,m_InputType);
-        m_InputHeight = Math.Min(15, m_InputHeight);
+        inputType = Math.Min(15, inputType);
+        inputHeight = Math.Min(15, inputHeight);
 
-        byte tmpType = BitConverter.GetBytes(m_InputType)[0];
-        byte tmpHeight = BitConverter.GetBytes(m_InputHeight)[0];
+        byte tmpType = BitConverter.GetBytes(inputType)[0];
+        byte tmpHeight = BitConverter.GetBytes(inputHeight)[0];
         byte tmpByteColor = (byte)((tmpType << 4) + tmpHeight);
 
         //创建图片
-        CreateNewTexture(m_InputRow, m_InputCol, tmpByteColor);
+        CreateNewTexture(inputRow, inputCol, tmpByteColor);
     }
 
     /// <summary>
@@ -194,6 +232,29 @@ public class CreateGridInfoTexture : MonoBehaviour {
         m_VirtualTextureInfpPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// 确定修改
+    /// </summary>
+    public void OnBtnChangeItemSure()
+    {
+        m_EditorWindow.gameObject.SetActive(false);
+
+        if (m_CurSelectedGridItem)
+        {
+            int changeType = StringUtil.StringToInt(m_EditorTypeInput.GetComponent<InputField>().text);
+            int changeHeight = StringUtil.StringToInt(m_EditorHeightInput.GetComponent<InputField>().text);
+
+            changeType = Math.Min(15, changeType);
+            changeHeight = Math.Min(15, changeHeight);
+
+            byte tmpType = BitConverter.GetBytes(changeType)[0];
+            byte tmpHeight = BitConverter.GetBytes(changeHeight)[0];
+            byte tmpByteColor = (byte)((tmpType << 4) + tmpHeight);
+            m_CurSelectedGridItem.GetComponent<Image>().color = ByteToColor(tmpByteColor);
+        }
+    }
+
+    //鼠标点击处理
     private void MousePick()
     {
         if (Input.GetMouseButtonDown(0))
@@ -228,6 +289,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
                         m_CurSelectedGridItem.GetComponent<Animation>().Play();
                         m_CurSelectedGridItem.GetComponent<Animation>().wrapMode = WrapMode.Loop;
                     }
+
+                    m_EditorWindow.gameObject.SetActive(true);
                 }
         
             }

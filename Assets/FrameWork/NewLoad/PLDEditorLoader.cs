@@ -48,9 +48,9 @@ namespace Pld
             Object res = AssetDatabase.LoadAssetAtPath<Object>(Url);
             OnFinish(res);
             return res;
-#endif
-
+#else
             return null;
+#endif
         }
     }
 }

@@ -11,6 +11,40 @@ namespace Pld
         Async,  //异步
     }
 
+    #region 定义委托
+
+    /// <summary>
+    /// 开始委托
+    /// </summary>
+    public delegate void StartDelgate();
+
+    /// <summary>
+    /// 载入过程委托
+    /// </summary>
+    /// <param name="process"></param>
+    public delegate void ProcessDelgate(float process);
+
+    /// <summary>
+    /// 成功委托
+    /// </summary>
+    /// <param name="resultObject">载入得到的对象</param>
+    public delegate void SuccessDelgate(object resultObject);
+
+    /// <summary>
+    /// 失败委托
+    /// </summary>
+    /// <param name="msg">失败的信息</param>
+    public delegate void ErrorDelgate(string msg);
+
+    /// <summary>
+    /// 完成委托
+    /// </summary>
+    /// <param name="isOk">是否成功</param>
+    /// <param name="resultObject">载入得到的对象</param>
+    public delegate void FinishDelgate(bool isOk, object resultObject);
+
+    #endregion
+
     class PLDResourceLoaderSystem : PLDMOSingleton<PLDResourceLoaderSystem>
     {
         public void Awake()

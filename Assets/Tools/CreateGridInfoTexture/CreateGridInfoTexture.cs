@@ -17,7 +17,6 @@ public class CreateGridInfoTexture : MonoBehaviour {
     private const int SCREEN_WIDTH = 1280;
     private const int SCREEN_HEIGHT = 720;
 
-    private Texture2D m_SaveTexture;
     private Rect m_TextureSize;
     private LogicGridItem[,] m_LogicGridItems;
     private GameObject m_LogicGridItemAttachNode;
@@ -74,33 +73,34 @@ public class CreateGridInfoTexture : MonoBehaviour {
     /// <summary>
     /// 生成只有单8位通道的图片
     /// </summary>
-    /// <param name="width">宽</param>
-    /// <param name="height">高</param>
+    /// <param name="row">行</param>
+    /// <param name="col">列</param>
     /// <param name="rawSingleGridItemData">一个byte保存信息，高4位表示类型，低4位表示高度</param>
-    public void CreateNewTexture(int width, int height, byte rawSingleGridItemData)
+    public void CreateNewTexture(int row, int col, byte rawSingleGridItemData)
     {
-        //Debug.Assert(width == height, "width not equal to height");
-        if (width == 0 || height == 0)
+        //Debug.Assert(row == col, "width not equal to height");
+        if (row == 0 || col == 0)
             return;
 
-        m_TextureSize = new Rect(0, 0, width, height);
-        m_SaveTexture = new Texture2D(width, height, TextureFormat.R8, false);
-        m_LogicGridItems = new GameObject[height, width];
+        m_TextureSize = new Rect(0, 0, col, row);
+        m_LogicGridItems = new GameObject[row, col];
 
         //Grid Layout
         m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = width;
-        int maxSizeLength = (SCREEN_HEIGHT - 100) / height;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = col;
+        int maxSizeLength = (SCREEN_HEIGHT - 200) / row;
         m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().cellSize = new Vector2(maxSizeLength, maxSizeLength);
 
 
         //二进制数据数组
-        byte[] rawData = new byte[width*height];
+        byte[] rawData = new byte[row*col + 2];
+        rawData[0] = (byte)row;
+        rawData[1] = (byte)col;
 
-        int index = 0;
-        for(int i=0;i< height; i++)
+        int index = 2;
+        for(int i=0;i< row; i++)
         {
-            for(int j=0;j<width;j++)
+            for(int j=0;j<col;j++)
             {
                 rawData[index] = rawSingleGridItemData;
                 //生成逻辑网格格子
@@ -110,9 +110,8 @@ public class CreateGridInfoTexture : MonoBehaviour {
             }
         }
 
-        //将数据load到texture，并保存
-        m_SaveTexture.LoadRawTextureData(rawData);
-        SaveTexture(m_SaveTexture, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
+        //将数据并保存
+        Utils.SaveBytesToLocal(rawData, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
     }
 
     /// <summary>
@@ -135,21 +134,53 @@ public class CreateGridInfoTexture : MonoBehaviour {
         return item;
     }
 
-    //保存图片，获取Texture的二进制数据进行保存
-    public void SaveTexture(Texture2D texture, string path)
+    //读取二进制文件,生成图片显示
+    public void LoadTexture(string path)
     {
-        texture.Apply();
+        if (path == "")
+            return;
 
-        //byte[] bytes = texture.EncodeToPNG();
-        byte[] bytes = texture.GetRawTextureData();
+        Utils.ReadBytes(path, (bool isSuccess, object result) =>
+         {
+             if(isSuccess)
+             {
+                 WWW www = result as WWW;
+                 byte[] rawdata = www.bytes;
+                 int size = www.bytesDownloaded;
+                 int row = rawdata[0];
+                 int col = rawdata[1];
 
-        Utils.SaveBytesToLocal(bytes, path);
+                 byte[] realyData = new byte[size-2];
+                 Utils.CopyBytes(rawdata, 2, realyData, 0, size - 2);
+
+                 byte[] textureRawData = new byte[row * col * 4];
+                 for(int i=0, j =0;i<size-2;i++, j+=4)
+                 {
+                     textureRawData[j] = realyData[i];
+                     textureRawData[j+1] = 0;
+                     textureRawData[j+2] = 0;
+                     textureRawData[j+3] = 255;
+                 }
+
+                 Texture2D texture = new Texture2D(col,row,TextureFormat.RGBA32,false);
+                 texture.LoadRawTextureData(textureRawData);
+                 texture.Apply();
+
+                 Sprite sp = Sprite.Create(texture, new Rect(0, 0, col, row), Vector2.zero);
+
+                 LogicGridItem newItem = GenNewLogicGridItem(0, 0, 0);
+                 newItem.GetComponent<Image>().sprite = sp;
+                 newItem.transform.SetParent(m_MainPanel.transform);
+
+             }
+         });
     }
 
-    //读取二进制文件
-    public void LoadTexture()
+    //载入图片
+    public void OnBtnLoadTexture()
     {
-        
+        string path = Utils.SelectFile();
+        LoadTexture(path);
     }
 
     /// <summary>
@@ -157,30 +188,31 @@ public class CreateGridInfoTexture : MonoBehaviour {
     /// </summary>
     public void OnBtnSaveResultTexture()
     {
-        int height = (int)m_TextureSize.height;
-        int width = (int)m_TextureSize.width;
+        int row = (int)m_TextureSize.height;
+        int col = (int)m_TextureSize.width;
         //二进制数据数组
-        byte[] rawData = new byte[width * height];
+        byte[] rawData = new byte[row * col + 2];
+        rawData[0] = (byte)row;
+        rawData[1] = (byte)col;
 
-        Texture2D compareNormalTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        Texture2D compareNormalTexture = new Texture2D(col, row, TextureFormat.RGBA32, false);
 
-        int index = 0;
-        for (int i = 0; i < height; i++)
+        int index = 2;
+        for (int i = 0; i < row; i++)
         {
-            for (int j = 0; j < width; j++)
+            for (int j = 0; j < col; j++)
             {
                 //生成逻辑网格格子
-                rawData[index] = ColorToByte(m_LogicGridItems[i, j].GetComponent<Image>().color);
+                rawData[index] = ColorToByte(m_LogicGridItems[row - i - 1, j].GetComponent<Image>().color);
 
-                compareNormalTexture.SetPixel(j, height - i, m_LogicGridItems[i, j].GetComponent<Image>().color);
+                compareNormalTexture.SetPixel(j, i, m_LogicGridItems[row - i - 1, j].GetComponent<Image>().color);
 
                 ++index;
             }
         }
 
-        //将数据load到texture，并保存
-        m_SaveTexture.LoadRawTextureData(rawData);
-        SaveTexture(m_SaveTexture, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
+        //将数据保存
+        Utils.SaveBytesToLocal(rawData, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
 
         byte[] bytes = compareNormalTexture.EncodeToPNG();
         Utils.SaveBytesToLocal(bytes, "Assets/Tools/CreateGridInfoTexture/bin/compare.png");

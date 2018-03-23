@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using UnityEngine;
 
@@ -70,6 +69,57 @@ namespace Pld
                 string fullpath = PLDGlobalDef.PERSISTENT_PATH + "/" + path;
                 File.WriteAllBytes(fullpath, bytes);
             }
+        }
+
+        /// <summary>
+        /// 读取二进制文件
+        /// 二进制文件存放在StreamingAssets中，用WWW来读取
+        /// </summary>
+        /// <param name="path"></param>
+        public static void ReadBytes(string path, FinishDelgate callback)
+        {
+            PLDWWWLoader loader = PLDWWWLoader.Create(path);
+            loader.LoadAsync(callback);
+        }
+
+        /// <summary>
+        /// 字节数组复制
+        /// </summary>
+        /// <param name="src">源</param>
+        /// <param name="srcOffset">src的字节偏移</param>
+        /// <param name="dest">目标</param>
+        /// <param name="destOffset">dest的字节偏移</param>
+        /// <param name="length">要复制的字节数</param>
+        public static void CopyBytes(byte[] src, int srcOffset, byte[] dest, int destOffset, int length)
+        {
+            try
+            {
+                Buffer.BlockCopy(src, srcOffset, dest, destOffset, length);
+            }
+            catch (Exception e)
+            {
+                Debug.Assert(false, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 选择本地文件，返回路径
+        /// </summary>
+        /// <returns>已选择的本地文件路径</returns>
+        public static string SelectFile()
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            OpenFileName config = LocalDialog.GetOpenFileNameConfig();
+            if(LocalDialog.GetSaveFileName(config))
+            {
+                Debug.Log("Get Select File Path:" + config.file);
+                return config.file;
+            }
+#else
+
+#endif
+            return "";
+
         }
     }
 }

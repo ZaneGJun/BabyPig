@@ -48,6 +48,7 @@ public class CreateGridInfoTexture : MonoBehaviour {
 
     }
 
+    #region Tool
     /// <summary>
     /// byte转为Color
     /// </summary>
@@ -69,13 +70,14 @@ public class CreateGridInfoTexture : MonoBehaviour {
         byte[] bytes = BitConverter.GetBytes(color.r);
         return bytes[0];
     }
+    #endregion
 
     /// <summary>
-    /// 生成只有单8位通道的图片
+    /// 显示只有单8位通道的逻辑图片信息
     /// </summary>
     /// <param name="row">行</param>
     /// <param name="col">列</param>
-    /// <param name="rawSingleGridItemData">一个byte保存信息，高4位表示类型，低4位表示高度</param>
+    /// <param name="rawSingleGridItemData">一个byte保存信息，高4位表示类型，低4位表示高度,所有逻辑像素用这个颜色填充</param>
     public void CreateNewTexture(int row, int col, byte rawSingleGridItemData)
     {
         //Debug.Assert(row == col, "width not equal to height");
@@ -88,31 +90,52 @@ public class CreateGridInfoTexture : MonoBehaviour {
         //Grid Layout
         m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = col;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.UpperLeft;
         int maxSizeLength = (SCREEN_HEIGHT - 200) / row;
         m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().cellSize = new Vector2(maxSizeLength, maxSizeLength);
 
-
-        //二进制数据数组
-        byte[] rawData = new byte[row*col + 2];
-        rawData[0] = (byte)row;
-        rawData[1] = (byte)col;
-
-        int index = 2;
         for(int i=0;i< row; i++)
         {
             for(int j=0;j<col;j++)
             {
-                rawData[index] = rawSingleGridItemData;
                 //生成逻辑网格格子
                 m_LogicGridItems[i, j] = GenNewLogicGridItem(i,j, rawSingleGridItemData);
-
-                ++index;
             }
         }
-
-        //将数据并保存
-        Utils.SaveBytesToLocal(rawData, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
     }
+
+    /// <summary>
+    /// 用本地文件数据显示只有单8位通道的逻辑图片信息
+    /// </summary>
+    /// <param name="row">行</param>
+    /// <param name="col">列</param>
+    /// <param name="rawGridItemDatas">图片的像素信息</param>
+    public void CreateNewTextureFromFile(int row, int col, byte[] rawGridItemDatas)
+    {
+        //Debug.Assert(row == col, "width not equal to height");
+        if (row == 0 || col == 0)
+            return;
+
+        m_TextureSize = new Rect(0, 0, col, row);
+        m_LogicGridItems = new GameObject[row, col];
+
+        //Grid Layout
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = col;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerLeft;
+        int maxSizeLength = (SCREEN_HEIGHT - 200) / row;
+        m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().cellSize = new Vector2(maxSizeLength, maxSizeLength);
+
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                //生成逻辑网格格子
+                m_LogicGridItems[row-i-1, j] = GenNewLogicGridItem(row-i-1, j, rawGridItemDatas[i*col + j]);
+            }
+        }
+    }
+
 
     /// <summary>
     /// 创建逻辑网格格子，根据行列数设定位置,将一个byte的信息用color的R通道表示
@@ -153,6 +176,18 @@ public class CreateGridInfoTexture : MonoBehaviour {
                  byte[] realyData = new byte[size-2];
                  Utils.CopyBytes(rawdata, 2, realyData, 0, size - 2);
 
+                 m_TextureSize = new Rect(0, 0, col, row);
+                 m_LogicGridItems = new GameObject[row, col];
+
+                 //Grid Layout
+                 m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                 m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().constraintCount = col;
+                 int maxSizeLength = (SCREEN_HEIGHT - 200) / row;
+                 m_LogicGridItemAttachNode.GetComponent<GridLayoutGroup>().cellSize = new Vector2(maxSizeLength, maxSizeLength);
+
+                 CreateNewTextureFromFile(row, col, realyData);
+
+                 /*
                  byte[] textureRawData = new byte[row * col * 4];
                  for(int i=0, j =0;i<size-2;i++, j+=4)
                  {
@@ -171,7 +206,7 @@ public class CreateGridInfoTexture : MonoBehaviour {
                  LogicGridItem newItem = GenNewLogicGridItem(0, 0, 0);
                  newItem.GetComponent<Image>().sprite = sp;
                  newItem.transform.SetParent(m_MainPanel.transform);
-
+                 */
              }
          });
     }
@@ -179,7 +214,10 @@ public class CreateGridInfoTexture : MonoBehaviour {
     //载入图片
     public void OnBtnLoadTexture()
     {
-        string path = Utils.SelectFile();
+        m_MainPanel.SetActive(false);
+        m_VirtualTextureInfpPanel.SetActive(true);
+
+        string path = Utils.ShowDialogGetSelectFilePath();
         LoadTexture(path);
     }
 
@@ -203,20 +241,23 @@ public class CreateGridInfoTexture : MonoBehaviour {
             for (int j = 0; j < col; j++)
             {
                 //生成逻辑网格格子
-                rawData[index] = ColorToByte(m_LogicGridItems[row - i - 1, j].GetComponent<Image>().color);
-
-                compareNormalTexture.SetPixel(j, i, m_LogicGridItems[row - i - 1, j].GetComponent<Image>().color);
+                rawData[index] = ColorToByte(m_LogicGridItems[row-i-1, j].GetComponent<Image>().color);
+                compareNormalTexture.SetPixel(j, i, m_LogicGridItems[row-i-1, j].GetComponent<Image>().color);
 
                 ++index;
             }
         }
 
         //将数据保存
-        Utils.SaveBytesToLocal(rawData, "Assets/Tools/CreateGridInfoTexture/bin/mapInfo.map");
+        string savePath = Utils.ShowDialogGetSaveFilePath();
+        if (!Utils.HaveExt(savePath))
+            savePath += ".map";
+        Utils.SaveBytesToLocal(rawData, savePath);
 
+        //并保存一幅Png图作对比
         byte[] bytes = compareNormalTexture.EncodeToPNG();
-        Utils.SaveBytesToLocal(bytes, "Assets/Tools/CreateGridInfoTexture/bin/compare.png");
-
+        string pngPath = Utils.RemoveExt(savePath);
+        Utils.SaveBytesToLocal(bytes, pngPath + ".png");
     }
 
     /// <summary>

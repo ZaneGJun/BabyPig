@@ -103,14 +103,14 @@ namespace Pld
         }
 
         /// <summary>
-        /// 选择本地文件，返回路径
+        /// 打开窗口选择本地文件，返回路径
         /// </summary>
         /// <returns>已选择的本地文件路径</returns>
-        public static string SelectFile()
+        public static string ShowDialogGetSelectFilePath()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             OpenFileName config = LocalDialog.GetOpenFileNameConfig();
-            if(LocalDialog.GetSaveFileName(config))
+            if(LocalDialog.GetOpenFileName(config))
             {
                 Debug.Log("Get Select File Path:" + config.file);
                 return config.file;
@@ -119,7 +119,24 @@ namespace Pld
 
 #endif
             return "";
+        }
 
+        /// <summary>
+        /// 打开文件选择文件保存到本地的路径
+        /// </summary>
+        /// <returns>返回的路径</returns>
+        public static string ShowDialogGetSaveFilePath()
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            OpenFileName config = LocalDialog.GetOpenFileNameConfig();
+            if (LocalDialog.GetSaveFileName(config))
+            {
+                Debug.Log("Get Select File Path:" + config.file);
+                return config.file;
+            }
+#else
+#endif
+            return "";
         }
     }
 }

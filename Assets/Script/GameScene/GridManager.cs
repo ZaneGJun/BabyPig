@@ -37,7 +37,7 @@ public class GridManager : MonoBehaviour {
         m_GridRef = null;
     }
 
-    public void GenGrid(int row, int col, GridType[,] gridTypeData)
+    public void GenGrids(int row, int col, GridType[,] gridTypeData)
     {
         m_GridRef = new GameObject[row, col];
 
@@ -52,6 +52,35 @@ public class GridManager : MonoBehaviour {
 
     public void GenGridFromTexture(string texturePath)
     {
+        PLDWWWLoader loader = PLDWWWLoader.Create(texturePath);
+        loader.LoadAsync((bool isSuccess, object result) =>
+        {
+            if(isSuccess)
+            {
+                WWW www = result as WWW;
+                byte[] rawdata = www.bytes;
+                int size = www.bytesDownloaded;
+                int row = rawdata[0];
+                int col = rawdata[1];
+
+                byte[] realyData = new byte[size - 2];
+                Utils.CopyBytes(rawdata, 2, realyData, 0, size - 2);
+
+                GridType[,] typeData = new GridType[row, col];
+
+                for(int i=0;i<row;i++)
+                    for(int j=0;j<col;j++)
+                    {
+                        byte rawData = realyData[i * col + j];
+                        GridType tmpType = (GridType)(rawData >> 4);
+                        typeData[i, j] = tmpType;
+                    }
+
+                GenGrids(row, col, typeData);
+            }
+        });
+
+        /*
         Texture2D gridInfoTexture = PLDAssetFileLoader.Create(texturePath).Load() as Texture2D;
         m_GridRef = new GameObject[gridInfoTexture.width, gridInfoTexture.height];
 
@@ -63,6 +92,7 @@ public class GridManager : MonoBehaviour {
                 
             }
         }
+        */
     }
 
     public GameObject GenOneGrid(int row, int col, GridType gridType = GridType.NONE)

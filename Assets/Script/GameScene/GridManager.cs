@@ -105,7 +105,7 @@ public class GridManager : MonoBehaviour {
             m_GridSize = gridPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size;
         }
 
-        Vector3 newGridPos = new Vector3(row * m_GridSize.x,0, col * m_GridSize.z);
+        Vector3 newGridPos = new Vector3(col * m_GridSize.x,0, row * m_GridSize.z);
         GameObject gridGameObject = Instantiate(gridPrefab, newGridPos, new Quaternion(), m_GridParentNode.transform);
 
         switch(gridType)

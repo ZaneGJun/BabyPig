@@ -224,7 +224,9 @@ namespace Pld
 
             loader.mAssetBundleLoader = PLDAssetBundleLoader.Create(path);
             loader.mResourceResLoader = PLDResourceResLoader.Create(path);
+#if UNITY_EDITOR
             loader.mEditorLoader = PLDEditorLoader.Create(path);
+#endif
 
             return loader;
         }

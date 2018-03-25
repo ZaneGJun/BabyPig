@@ -115,13 +115,15 @@ namespace Pld
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public static T LoadEditor<T>(string path) where T : UnityEngine.Object
 		{
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 			T obj = AssetDatabase.LoadAssetAtPath<T>(path);
 			return obj;
+#else
+            return null;
 #endif
-		}
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
 

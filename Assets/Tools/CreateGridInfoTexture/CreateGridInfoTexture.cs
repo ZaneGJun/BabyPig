@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using Pld;
 using System;
 using UnityEngine.EventSystems;
-
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 using LogicGridItem = UnityEngine.GameObject;
 
@@ -100,6 +101,7 @@ public class CreateGridInfoTexture : MonoBehaviour {
             {
                 //生成逻辑网格格子
                 m_LogicGridItems[i, j] = GenNewLogicGridItem(i,j, rawSingleGridItemData);
+                //GenNewLogicGridItem(i, j, rawSingleGridItemData);
             }
         }
     }
@@ -132,6 +134,7 @@ public class CreateGridInfoTexture : MonoBehaviour {
             {
                 //生成逻辑网格格子
                 m_LogicGridItems[row-i-1, j] = GenNewLogicGridItem(row-i-1, j, rawGridItemDatas[i*col + j]);
+                //GenNewLogicGridItem(row - i - 1, j, rawGridItemDatas[i * col + j]);
             }
         }
     }
@@ -146,8 +149,11 @@ public class CreateGridInfoTexture : MonoBehaviour {
     /// <returns></returns>
     private LogicGridItem GenNewLogicGridItem(int row, int col, byte rawSingleGridItemData)
     {
-        GameObject res = (PLDEditorLoader.Create("Assets/Tools/CreateGridInfoTexture/LogicGridItem.prefab").Load()) as GameObject;
-        GameObject item = Instantiate<GameObject>(res, m_LogicGridItemAttachNode.transform);
+        PLDResourceResLoader loader = PLDResourceResLoader.Create("LogicGridItem");
+        GameObject resObj = loader.Load() as GameObject;
+        Debug.Assert(resObj != null, "Resources Load prefab faild");
+
+        GameObject item = Instantiate<GameObject>(resObj, m_LogicGridItemAttachNode.transform);
 
         //set color
         item.GetComponent<Image>().color = ByteToColor(rawSingleGridItemData);
@@ -250,6 +256,9 @@ public class CreateGridInfoTexture : MonoBehaviour {
 
         //将数据保存
         string savePath = Utils.ShowDialogGetSaveFilePath();
+        if (savePath == "")
+            return;
+
         if (!Utils.HaveExt(savePath))
             savePath += ".map";
         Utils.SaveBytesToLocal(rawData, savePath);

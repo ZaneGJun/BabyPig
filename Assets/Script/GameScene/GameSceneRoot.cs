@@ -30,18 +30,6 @@ public class GameSceneRoot : MonoBehaviour {
     {
         yield return new WaitForSeconds(2);
 
-        /*
-        GridType[,] gridInfo = new GridType[30, 30];
-        for(int i=0;i<30;i++)
-        {
-            for(int j=0;j<30;j++)
-            {
-                gridInfo[i, j] = GridType.GRASS;
-            }
-        }
-        m_GridManager.GenGrids(30, 30, gridInfo);
-        */
-
         m_GridManager.GenGridFromTexture(PLDGlobalDef.STREAMING_PATH+"/map/mapInfo.map");
     }
 }

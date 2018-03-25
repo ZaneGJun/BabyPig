@@ -128,7 +128,7 @@ namespace Pld
         public static string ShowDialogGetSaveFilePath()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            OpenFileName config = LocalDialog.GetOpenFileNameConfig();
+            OpenFileName config = LocalDialog.GetSaveFileNameConfig();
             if (LocalDialog.GetSaveFileName(config))
             {
                 Debug.Log("Get Select File Path:" + config.file);

@@ -14,6 +14,7 @@ namespace Pld
         // 静态方法
         public static PLDResourceResLoader Create(string path)
         {
+            path = Utils.RemoveExt(path);
             var loader = PLDResourceLoaderCache.GetResourceLoader<PLDResourceResLoader>(path);
             return loader;
         }

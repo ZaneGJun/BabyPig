@@ -63,7 +63,23 @@ namespace Pld
         {
             OpenFileName openFileName = new OpenFileName();
             openFileName.structSize = Marshal.SizeOf(openFileName);
-            openFileName.filter = ".*";
+            openFileName.filter = "*";
+            openFileName.file = new string(new char[256]);
+            openFileName.maxFile = openFileName.file.Length;
+            openFileName.fileTitle = new string(new char[64]);
+            openFileName.maxFileTitle = openFileName.fileTitle.Length;
+            openFileName.initialDir = Application.streamingAssetsPath.Replace('/', '\\');//默认路径
+            openFileName.title = "选择文件";
+            openFileName.flags = 0x00080000 | 0x00001000 | 0x00000800 | 0x00000008;
+
+            return openFileName;
+        }
+
+        public static OpenFileName GetSaveFileNameConfig()
+        {
+            OpenFileName openFileName = new OpenFileName();
+            openFileName.structSize = Marshal.SizeOf(openFileName);
+            openFileName.filter = "*";
             openFileName.file = new string(new char[256]);
             openFileName.maxFile = openFileName.file.Length;
             openFileName.fileTitle = new string(new char[64]);

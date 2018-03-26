@@ -30,6 +30,13 @@ public class GameSceneRoot : MonoBehaviour {
     {
         yield return new WaitForSeconds(2);
 
-        m_GridManager.GenGridFromTexture(PLDGlobalDef.STREAMING_PATH+"/map/mapInfo.map");
+        m_GridManager.GenGridFromTexture(PLDGlobalDef.STREAMING_PATH+ "/map/normalMapInfo.map");
+    }
+
+    private void GenAnimation()
+    {
+        Animation ani = new Animation();
+        AnimationClip clip = new AnimationClip();
+        
     }
 }

@@ -68,8 +68,9 @@ public class CreateGridInfoTexture : MonoBehaviour {
     /// <returns>返回的byte</returns>
     private static byte ColorToByte(Color color)
     {
-        byte[] bytes = BitConverter.GetBytes(color.r);
-        return bytes[0];
+        int realVal = (int)(color.r * 255.0f);
+        realVal = realVal & 511;
+        return (byte)realVal;
     }
     #endregion
 

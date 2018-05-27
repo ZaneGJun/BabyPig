@@ -5,11 +5,15 @@ namespace Pld
 {
     public class PLDStateMachine<T> : IPLDStateMachine
     {
+        public PLDStateMachine(T target)
+        {
+            m_Target = target;
+        }
+
         protected T m_Target;
         public T Target
         {
             get { return m_Target; }
-            set { m_Target = value; }
         }
 
         protected PLDState<T> m_CurState;
@@ -32,7 +36,10 @@ namespace Pld
                     PLDState<T> toState = m_StateMap[stateName];
 
                     //退出旧的状态
-                    m_CurState.Exit();
+                    if (m_CurState != null)
+                    {
+                        m_CurState.Exit();
+                    }
 
                     //进入新的状态
                     toState.Enter(this);

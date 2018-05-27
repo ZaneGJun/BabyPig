@@ -61,7 +61,15 @@ namespace Pld{
 		{
 			get 
 			{
-				return Application.streamingAssetsPath;
+                switch(Application.platform)
+                {
+                    case RuntimePlatform.Android:
+                        return "jar:file://" + Application.dataPath + "!/assets/";
+                    case RuntimePlatform.IPhonePlayer:
+                        return Application.dataPath + "/Raw/";
+                    default:
+                        return Application.streamingAssetsPath;
+                }
             }
 		}
 		

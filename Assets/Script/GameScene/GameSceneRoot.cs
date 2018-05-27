@@ -18,7 +18,6 @@ public class GameSceneRoot : MonoBehaviour {
     // Use this for initialization
     void Start () {
         StartCoroutine(StartGenGrid());
-       
 	}
 	
 	// Update is called once per frame

@@ -4,12 +4,6 @@ namespace Pld
 {
     public abstract class PLDState<T> : IPLDState
     {
-        //禁用默认构造函数
-        private PLDState()
-        {
-
-        }
-
         public PLDState(string name)
         {
             m_Name = name;

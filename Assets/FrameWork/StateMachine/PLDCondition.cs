@@ -4,12 +4,6 @@ namespace Pld
 {
     public abstract class PLDCondition<T> : IPLDCondition
     {
-        //禁用默认构造函数
-        private PLDCondition()
-        {
-
-        }
-
         public PLDCondition(string name)
         {
             m_Name = name;

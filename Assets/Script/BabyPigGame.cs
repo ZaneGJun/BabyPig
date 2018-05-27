@@ -8,7 +8,7 @@ using Pld;
 /// <summary>
 /// 游戏场景
 /// </summary>
-public enum GameScene
+public enum GameScene 
 {
     START_SCENE = 0,
     GAME_SCENE,

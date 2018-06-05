@@ -242,8 +242,7 @@ namespace Pld
 #if UNITY_EDITOR
             //编辑器模式下的加载
             return mEditorLoader.Load();
-#endif
-
+#else
             if(mIsResourceLoad)
             {
                 return mResourceResLoader.Load();
@@ -252,6 +251,7 @@ namespace Pld
             {
                 return mAssetBundleLoader.Load();
             }
+#endif
         }
 
         /// <summary>

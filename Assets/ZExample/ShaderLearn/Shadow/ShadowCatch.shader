@@ -37,10 +37,8 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				//float depth = i.depth.x / i.depth.y;
-				float depth = i.vertex.z;
-				//opengl ndc下z为[-1,1]，需要映射到[0,1]
-				fixed4 col = EncodeFloatRGBA(depth*0.5 + 0.5);
+				float depth = i.depth.x / i.depth.y;
+				fixed4 col = EncodeFloatRGBA(depth);
 				return col;
 			}
 			ENDCG

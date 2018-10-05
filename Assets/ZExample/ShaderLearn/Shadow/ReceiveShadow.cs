@@ -8,12 +8,6 @@ public class ReceiveShadow : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        
-
-    }
-	
-	// Update is called once per frame
-	void Update () {
         if (Shader.Find("Test/Shadow/ReciveShadow") && lightCamera)
         {
             Matrix4x4 WVMat = lightCamera.worldToCameraMatrix;
@@ -26,5 +20,15 @@ public class ReceiveShadow : MonoBehaviour {
             Matrix4x4 mat = posToUV * PMat * WVMat;
             Shader.SetGlobalMatrix("lightProjectionMatrix", mat);
         }
+
+        float _FilterSize = 1.0f;
+        float total = (float)(_FilterSize * 2.0f + 1.0f); //(_FilterSize * 2.0f + 1.0f) * (_FilterSize * 2.0f + 1.0f);
+
+        Debug.Log(total);
+    }
+	
+	// Update is called once per frame
+	void Update () {
+        
     }
 }

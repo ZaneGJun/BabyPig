@@ -9,13 +9,9 @@ public class ShadowCamera : MonoBehaviour {
         Camera cam = this.GetComponent<Camera>();
         if (cam)
         {
-            Debug.Log("get camera success");
-            if (Shader.Find("Test/Shadow/ShadowCatch"))
-            {
-                Debug.Log("get shader ShadowCatch");
-            }
-
             cam.SetReplacementShader(Shader.Find("Test/Shadow/ShadowCatch"), "RenderType");
+
+            
         }
 	}
 	
@@ -23,4 +19,6 @@ public class ShadowCamera : MonoBehaviour {
 	void Update () {
 		
 	}
+
+
 }

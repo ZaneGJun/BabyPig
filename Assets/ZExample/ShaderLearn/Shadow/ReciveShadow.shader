@@ -67,6 +67,7 @@
 		}
 
 		//***************************************************
+		//Shadow Bias
 
 		/**
 		 * 采用ShadowBias消除Shadow Acne
@@ -95,6 +96,7 @@
 		}
 
 		//***************************************************
+		//Slop-Scale Depth Bias
 
 		struct v2fSlopeScale
 		{
@@ -167,6 +169,7 @@
 		}
 
 		//***************************************************
+		//PCF
 
 		/**
 		 * PCF滤波
@@ -175,7 +178,7 @@
 		{
 			float _TexturePixelWidth = 1024.0f;
 			float _TexturePixelHeight = 1024.0f;
-			float _FilterSize = 1.0f;
+			float _FilterSize = 1.5f;
 
 			float shadow = 0.0f;
 			float2 texelSize = float2(_TexturePixelWidth, _TexturePixelHeight);
@@ -202,6 +205,36 @@
 		}
 
 		/**
+		 * 泊松分布PCF
+		 */
+		float PencentCloaerPoissonFilter(float2 uv, float sceneDepth, float bias)
+		{
+			float2 possionDisk[4] = 
+			{
+				float2(-0.94201624, -0.39906216),
+				float2(0.94558609, -0.76890725),
+			    float2(-0.094184101, -0.92938870),
+				float2(0.34495938, 0.29387760)
+			};
+	
+			float shadow = 0.0f;
+
+			for(int i = 0; i < 4; ++i)
+			{
+				float2 uv_offset = possionDisk[i]/500.0f;
+				fixed4 shadowCol = tex2D(ligthDepthTexture, uv + uv_offset);
+				float shadowDepth = DecodeFloatRGBA(shadowCol);
+					
+				float pixelLightDepth = sceneDepth + bias;
+				if(pixelLightDepth < shadowDepth){
+					shadow += 0.2f;
+				}
+			}
+
+			return shadow;
+		}
+
+		/**
 		 * 采用Slope-Scale Depth Bias消除Shadow Acne
 		 * 采用Pencentage close Filtering(PCF)来进行Aliasing
 		 */
@@ -221,12 +254,15 @@
 			pixelLightDepth += bias;
 
 			//PCF
-			float shadowFilterFactor = PencentCloaerFilter(depthUV, pixelLightDepth, bias);
+			float shadowFilterFactor = PencentCloaerPoissonFilter(depthUV, pixelLightDepth, bias); //PencentCloaerFilter(depthUV, pixelLightDepth, bias);
 	
 			//根据计算出的进行插值
 			fixed4 retCol = col * (1.0f - shadowFilterFactor) + _shadowColor * shadowFilterFactor;
 			return retCol;
 		}
+
+		//***************************************************
+		//CSM(Cascaded Shadow Maps)
 
 		ENDCG
 

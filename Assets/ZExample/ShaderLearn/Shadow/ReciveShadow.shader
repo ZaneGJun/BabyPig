@@ -52,10 +52,10 @@
 			//计算采样深度图的uv
 			float2 depthUV = i.lightClipPos.xy / i.lightClipPos.w;
 			fixed4 shadowCol = tex2D(ligthDepthTexture, depthUV);
-			//转化为深度值
+			//转化为深度值,因为保存的时候是[-1,1],所以shadowDepth为[-1,1]
 			float shadowDepth = DecodeFloatRGBA(shadowCol);
 
-			//计算像素在灯光坐标下的深度,因为矩阵已经处理，所以是[0,1]
+			//计算像素在灯光坐标下的深度,矩阵中没处理z的[-1,1]转换[0,1]，所以是[-1,1]
 			float pixelLightDepth = i.lightClipPos.z / i.lightClipPos.w;
 
 			//判断是否处在阴影区域
@@ -270,11 +270,11 @@
 		Pass
 		{
 			CGPROGRAM
-			//#pragma vertex vert
-			//#pragma fragment frag
+			#pragma vertex vert
+			#pragma fragment frag
 
-			#pragma vertex vertSlopeScale
-			#pragma fragment fragSlopeScaleDepthBiasPCF
+			//#pragma vertex vertSlopeScale
+			//#pragma fragment fragSlopeScaleDepthBiasPCF
 			
 			ENDCG
 		}

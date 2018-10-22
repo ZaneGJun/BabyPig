@@ -38,6 +38,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float depth = i.depth.x / i.depth.y;
+				//depth范围[-1,1]
 				fixed4 col = EncodeFloatRGBA(depth);
 				return col;
 			}

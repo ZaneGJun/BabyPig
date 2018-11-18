@@ -1,4 +1,4 @@
-# BabyPig
+# Paladin
 a learn game and framework
 
 
